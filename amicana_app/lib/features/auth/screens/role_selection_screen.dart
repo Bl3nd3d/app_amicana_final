@@ -1,3 +1,4 @@
+import 'package:amicana_app/core/services/auth_service.dart';
 import 'package:flutter/material.dart'; // <-- ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ PRESENTE
 import 'package:go_router/go_router.dart';
 import 'package:amicana_app/core/models/user_model.dart';
@@ -6,9 +7,18 @@ class RoleSelectionScreen extends StatelessWidget {
   final User user;
   const RoleSelectionScreen({super.key, required this.user});
 
-  void _onRoleSelected(BuildContext context, String role) {
-    print('Rol seleccionado: $role');
-    context.go('/library');
+  // Marcamos el método como 'async'
+  void _onRoleSelected(BuildContext context, String role) async {
+    // Instanciamos nuestro servicio
+    final authService = AuthService();
+    // Guardamos el rol seleccionado
+    await authService.saveSelectedRole(role);
+
+    // Navegamos a la pantalla principal de la biblioteca
+    if (context.mounted) {
+      // Buena práctica: verificar que el widget sigue en pantalla
+      context.go('/library');
+    }
   }
 
   @override

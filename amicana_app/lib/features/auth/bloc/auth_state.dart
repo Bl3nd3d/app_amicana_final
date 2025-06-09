@@ -18,3 +18,5 @@ class AuthFailure extends AuthState {
   final String error;
   AuthFailure({required this.error});
 }
+
+class RegistrationSuccess extends AuthState {}

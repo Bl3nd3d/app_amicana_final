@@ -1,3 +1,4 @@
+import 'package:amicana_app/core/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,9 +17,22 @@ class LoginScreen extends StatelessWidget {
       body: BlocProvider(
         create: (context) => AuthBloc(),
         child: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
+          listener: (context, state) async {
+            // <-- Marcamos el listener como 'async'
             if (state is AuthSuccess) {
-              context.go('/select-role', extra: state.user);
+              final user = state.user;
+              final authService = AuthService(); // Instanciamos el servicio
+
+              // --- AQUÍ ESTÁ LA NUEVA LÓGICA ---
+              if (user.roles.length == 1) {
+                // Si el usuario solo tiene un rol, lo guardamos y vamos a la biblioteca.
+                final singleRole = user.roles.first;
+                await authService.saveSelectedRole(singleRole);
+                context.go('/library');
+              } else {
+                // Si tiene más de un rol, vamos a la pantalla de selección.
+                context.go('/select-role', extra: user);
+              }
             } else if (state is AuthFailure) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
@@ -43,6 +57,15 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   const LoginForm(),
+                  const SizedBox(height: 24),
+                  TextButton(
+                    onPressed: () {
+                      // Usa push para poner la pantalla de registro encima de la de login
+                      context.push('/register');
+                    },
+                    child: const Text('¿No tienes una cuenta? Regístrate'),
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

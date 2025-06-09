@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
 import 'package:amicana_app/features/quizzes/screens/quizzes_list_screen.dart';
 import 'package:amicana_app/features/quizzes/screens/quiz_player_screen.dart';
+import 'package:amicana_app/features/auth/screens/register_screen.dart';
 // --- SECCIÓN DE IMPORTACIONES USANDO RUTAS DE PAQUETE ---
 // Modelos
 import 'package:amicana_app/core/models/user_model.dart';
@@ -39,6 +40,11 @@ class AppRouter {
           final user = state.extra as User;
           return RoleSelectionScreen(user: user);
         },
+      ),
+      GoRoute(
+        path: '/register',
+        name: 'register',
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/library',

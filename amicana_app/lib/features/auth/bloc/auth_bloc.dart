@@ -1,32 +1,36 @@
-import 'package:amicana_app/core/models/user_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:amicana_app/core/models/user_model.dart';
+import 'package:amicana_app/core/services/auth_service.dart'; // <-- IMPORTANTE
 
-// Estas líneas ya se encargan de conectar todo correctamente.
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthService _authService = AuthService(); // <-- Instancia del servicio
+
   AuthBloc() : super(AuthInitial()) {
+    // --- MANEJADOR DE LOGIN (ACTUALIZADO) ---
     on<LoginButtonPressed>((event, emit) async {
       emit(AuthLoading());
       try {
-        await Future.delayed(const Duration(seconds: 2));
-        if (event.email == 'admin@amicana.com' &&
-            event.password == 'admin123') {
-          // Esta línea ahora funciona porque el estado AuthSuccess está corregido.
-          final user = User(
-            id: '1',
-            name: 'Admin User',
-            email: 'admin@amicana.com',
-            roles: ['superusuario', 'usuario_normal'],
-          );
-          emit(AuthSuccess(user: user));
-        } else {
-          emit(AuthFailure(error: 'Correo o contraseña incorrectos.'));
-        }
+        final user = await _authService.login(
+            email: event.email, password: event.password);
+        emit(AuthSuccess(user: user));
       } catch (e) {
-        emit(AuthFailure(error: 'Ocurrió un error: ${e.toString()}'));
+        emit(AuthFailure(error: e.toString().replaceFirst('Exception: ', '')));
+      }
+    });
+
+    // --- MANEJADOR DE REGISTRO (NUEVO) ---
+    on<RegisterButtonPressed>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await _authService.register(
+            name: event.name, email: event.email, password: event.password);
+        emit(RegistrationSuccess());
+      } catch (e) {
+        emit(AuthFailure(error: e.toString().replaceFirst('Exception: ', '')));
       }
     });
   }
