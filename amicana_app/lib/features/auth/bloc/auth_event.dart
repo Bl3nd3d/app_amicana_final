@@ -1,0 +1,13 @@
+part of 'auth_bloc.dart';
+
+// Clase base para todos los eventos de autenticación
+@immutable
+abstract class AuthEvent {}
+
+// Evento que se dispara cuando el usuario presiona el botón de login
+class LoginButtonPressed extends AuthEvent {
+  final String email;
+  final String password;
+
+  LoginButtonPressed({required this.email, required this.password});
+}
