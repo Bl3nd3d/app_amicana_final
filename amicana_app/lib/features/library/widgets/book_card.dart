@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../models/book_model.dart';
+// --- RUTA DE IMPORTACIÓN CORREGIDA Y ESTANDARIZADA ---
+import 'package:amicana_app/features/library/models/book_model.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
@@ -10,7 +11,7 @@ class BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // ACTUALIZACIÓN: Pasamos el objeto 'book' completo a la siguiente pantalla.
+        // Pasamos el objeto 'book' completo a la siguiente pantalla.
         context.go('/library/book/${book.id}', extra: book);
       },
       child: Card(

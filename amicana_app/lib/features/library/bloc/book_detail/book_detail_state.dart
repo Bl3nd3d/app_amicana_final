@@ -1,5 +1,7 @@
 part of 'book_detail_bloc.dart';
 
+// NO DEBE HABER NINGUNA LÍNEA 'import ...' EN ESTE ARCHIVO
+
 @immutable
 abstract class BookDetailState {}
 

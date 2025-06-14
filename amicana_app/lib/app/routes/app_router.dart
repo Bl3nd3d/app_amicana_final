@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
-import 'package:amicana_app/features/quizzes/screens/quizzes_list_screen.dart';
-import 'package:amicana_app/features/quizzes/screens/quiz_player_screen.dart';
-import 'package:amicana_app/features/auth/screens/register_screen.dart';
-// --- SECCIÓN DE IMPORTACIONES USANDO RUTAS DE PAQUETE ---
-// Modelos
+
+// --- SECCIÓN ÚNICA Y ORGANIZADA DE IMPORTACIONES ---
+
+// Modelos (los datos que usa la app)
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
+import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
 
-// Pantallas de Autenticación
+// Pantallas (las vistas que el usuario ve)
 import 'package:amicana_app/features/auth/screens/login_screen.dart';
+import 'package:amicana_app/features/auth/screens/register_screen.dart';
 import 'package:amicana_app/features/auth/screens/role_selection_screen.dart';
-
-// Pantallas de Biblioteca
 import 'package:amicana_app/features/library/screens/library_home_screen.dart';
 import 'package:amicana_app/features/library/screens/book_detail_screen.dart';
-// -----------------------------------------------------------
+import 'package:amicana_app/features/quizzes/screens/quizzes_list_screen.dart';
+import 'package:amicana_app/features/quizzes/screens/quiz_player_screen.dart';
+// ----------------------------------------------------
 
 class AppRouter {
   AppRouter._();
 
-  // Definición completa del enrutador de la aplicación.
   static final GoRouter router = GoRouter(
-    // La primera pantalla que se mostrará al abrir la app.
     initialLocation: '/login',
-
-    // Lista de todas las rutas de la aplicación.
     routes: [
+      // --- Rutas de Autenticación ---
       GoRoute(
         path: '/login',
         name: 'login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        name: 'register',
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: '/select-role',
@@ -41,28 +43,25 @@ class AppRouter {
           return RoleSelectionScreen(user: user);
         },
       ),
-      GoRoute(
-        path: '/register',
-        name: 'register',
-        builder: (context, state) => const RegisterScreen(),
-      ),
+
+      // --- Rutas de Biblioteca ---
       GoRoute(
         path: '/library',
         name: 'library',
         builder: (context, state) => const LibraryHomeScreen(),
         routes: [
-          // Ruta anidada para los detalles de un libro específico.
           GoRoute(
             path: 'book/:bookId',
             name: 'bookDetail',
             builder: (context, state) {
-              // Recibimos el objeto 'Book' completo que pasamos como 'extra'.
               final book = state.extra as Book;
               return BookDetailScreen(book: book);
             },
           ),
         ],
       ),
+
+      // --- Rutas de Trivias ---
       GoRoute(
           path: '/quizzes',
           name: 'quizzes',
@@ -79,7 +78,7 @@ class AppRouter {
           ]),
     ],
 
-    // Pantalla que se muestra si se navega a una ruta no existente (Error 404).
+    // --- Pantalla para Rutas No Encontradas (Error 404) ---
     errorBuilder: (context, state) => Scaffold(
       appBar: AppBar(title: const Text('Página no encontrada')),
       body: Center(

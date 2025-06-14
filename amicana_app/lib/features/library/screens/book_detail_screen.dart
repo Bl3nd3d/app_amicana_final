@@ -9,6 +9,7 @@ class BookDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Proveemos el nuevo BLoC a la pantalla, pasándole el libro actual.
     return BlocProvider(
       create: (context) => BookDetailBloc(book: book),
       child: Scaffold(
@@ -17,21 +18,30 @@ class BookDetailScreen extends StatelessWidget {
         ),
         body: BlocBuilder<BookDetailBloc, BookDetailState>(
           builder: (context, state) {
-            if (state is BookDetailLoaded) {
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Hero(
-                        tag: 'book-cover-${book.id}',
-                        child: Image.network(book.coverUrl,
-                            height: 300, fit: BoxFit.contain),
+            // Mientras el BLoC se inicializa, podemos mostrar un spinner.
+            if (state is! BookDetailLoaded) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            // Una vez cargado, mostramos el contenido.
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Hero(
+                      tag: 'book-cover-${book.id}',
+                      child: Image.network(
+                        book.coverUrl,
+                        height: 300,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
+                  ),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Text(
                       book.title,
                       style: Theme.of(context)
                           .textTheme
@@ -39,47 +49,56 @@ class BookDetailScreen extends StatelessWidget {
                           ?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
-                    Center(
-                        child: Text('por ${book.author}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(fontStyle: FontStyle.italic))),
-                    const SizedBox(height: 24),
-                    Text(book.description,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.justify),
-                    const Divider(height: 40, thickness: 1),
-                    Text('Progreso de Lectura',
-                        style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 16),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: state.book.chapters.length,
-                      itemBuilder: (context, index) {
-                        final chapter = state.book.chapters[index];
-                        final isCompleted = state.progress.completedChapterIds
-                            .contains(chapter.id);
-
-                        return CheckboxListTile(
-                          title: Text(chapter.title),
-                          value: isCompleted,
-                          onChanged: (bool? value) {
-                            context.read<BookDetailBloc>().add(
-                                ToggleChapterStatus(chapterId: chapter.id));
-                          },
-                          secondary: const Icon(Icons.bookmark_border),
-                          activeColor: Theme.of(context).primaryColor,
-                        );
-                      },
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      'por ${book.author}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontStyle: FontStyle.italic),
                     ),
-                  ],
-                ),
-              );
-            }
-            return const Center(child: CircularProgressIndicator());
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    book.description,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.justify,
+                  ),
+                  const Divider(height: 40, thickness: 1),
+                  Text(
+                    'Progreso de Lectura',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  // Lista de capítulos interactiva
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: state.book.chapters.length,
+                    itemBuilder: (context, index) {
+                      final chapter = state.book.chapters[index];
+                      final isCompleted = state.progress.completedChapterIds
+                          .contains(chapter.id);
+
+                      return CheckboxListTile(
+                        title: Text(chapter.title),
+                        value: isCompleted,
+                        onChanged: (bool? value) {
+                          // Al cambiar, disparamos el evento al BLoC
+                          context
+                              .read<BookDetailBloc>()
+                              .add(ToggleChapterStatus(chapterId: chapter.id));
+                        },
+                        secondary: const Icon(Icons.bookmark_border),
+                        activeColor: Theme.of(context).primaryColor,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ),
