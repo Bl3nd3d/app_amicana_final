@@ -29,6 +29,7 @@ dependencies:
 
   # Para guardar datos simples en el dispositivo
   shared_preferences: ^2.2.3
+  firebase_core: ^3.14.0
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +37,7 @@ dev_dependencies:
     
   # Contiene un set de reglas para fomentar buenas prácticas de código
   flutter_lints: ^3.0.0
+  flutterfire_cli: ^1.2.0
 
 # La siguiente sección es específica para Flutter.
 flutter:

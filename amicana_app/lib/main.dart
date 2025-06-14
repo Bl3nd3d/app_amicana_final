@@ -1,8 +1,14 @@
+import 'package:amicana_app/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'app/routes/app_router.dart'; // Importa el enrutador
 import 'app/theme/app_theme.dart'; // Importa el tema
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
