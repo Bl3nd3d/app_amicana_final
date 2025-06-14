@@ -1,7 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:amicana_app/features/library/models/book_model.dart';
+
+// --- IMPORTACIONES MOVIDAS AQUÍ ---
+// Ahora el BLoC se encarga de importar los modelos que sus 'partes' necesitan.
+import 'package:amicana_app/features/library//models/book_model.dart';
 import 'package:amicana_app/features/library/models/reading_progress_model.dart';
+// ------------------------------------
 
 part 'book_detail_event.dart';
 part 'book_detail_state.dart';
@@ -10,14 +14,13 @@ class BookDetailBloc extends Bloc<BookDetailEvent, BookDetailState> {
   final Book book;
 
   BookDetailBloc({required this.book}) : super(BookDetailInitial()) {
-    // Simulación del progreso inicial al cargar el BLoC
+    // El resto de la lógica no necesita cambios.
     final initialProgress = ReadingProgress(
       userId: 'current_user_id',
       bookId: book.id,
-      completedChapterIds: {}, // Inicialmente ningún capítulo está completado
+      completedChapterIds: {},
     );
 
-    // Emitir inmediatamente el estado cargado con los datos iniciales
     emit(BookDetailLoaded(book: book, progress: initialProgress));
 
     on<ToggleChapterStatus>((event, emit) {

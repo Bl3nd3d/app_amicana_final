@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:amicana_app/core/models/user_model.dart';
-import 'package:amicana_app/core/services/auth_service.dart'; // <-- IMPORTANTE
+import 'package:amicana_app/core/models/user_model.dart'; // <-- IMPORT AQUÍ
+import 'package:amicana_app/core/services/auth_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
