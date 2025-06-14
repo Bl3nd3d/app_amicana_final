@@ -10,27 +10,20 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Usamos un Scaffold sin appBar para un look de pantalla completa
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido a A.M.I.C.A.N.A.'),
-      ),
       body: BlocProvider(
         create: (context) => AuthBloc(),
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) async {
-            // <-- Marcamos el listener como 'async'
             if (state is AuthSuccess) {
               final user = state.user;
-              final authService = AuthService(); // Instanciamos el servicio
-
-              // --- AQUÍ ESTÁ LA NUEVA LÓGICA ---
+              final authService = AuthService();
               if (user.roles.length == 1) {
-                // Si el usuario solo tiene un rol, lo guardamos y vamos a la biblioteca.
                 final singleRole = user.roles.first;
                 await authService.saveSelectedRole(singleRole);
                 context.go('/library');
               } else {
-                // Si tiene más de un rol, vamos a la pantalla de selección.
                 context.go('/select-role', extra: user);
               }
             } else if (state is AuthFailure) {
@@ -44,31 +37,87 @@ class LoginScreen extends StatelessWidget {
                 );
             }
           },
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.school, size: 80, color: Color(0xFF0D47A1)),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Inicio de Sesión',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 24),
-                  const LoginForm(),
-                  const SizedBox(height: 24),
-                  TextButton(
-                    onPressed: () {
-                      // Usa push para poner la pantalla de registro encima de la de login
-                      context.push('/register');
-                    },
-                    child: const Text('¿No tienes una cuenta? Regístrate'),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+          // Usamos un Stack para poner la imagen de fondo y el contenido encima
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // --- DETALLE 1: IMAGEN DE FONDO ---
+              Image.asset(
+                'assets/images/welcome_background.png', // Reutilizamos la misma imagen de fondo
+                fit: BoxFit.cover,
               ),
-            ),
+              // --- DETALLE 2: CAPA OSCURA PARA LEGIBILIDAD ---
+              // Un degradado oscuro hace que el texto blanco resalte más
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.4),
+                      Colors.black.withOpacity(0.7)
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+              // Capa con el contenido principal
+              SafeArea(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // --- DETALLE 3: ICONO Y TEXTOS ADAPTADOS ---
+                        const Icon(Icons.school, size: 80, color: Colors.white),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Inicio de Sesión',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // --- DETALLE 4: TARJETA PARA EL FORMULARIO ---
+                        // Envolvemos el LoginForm en una Card para darle un fondo
+                        // y que los campos de texto sean fáciles de leer.
+                        Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 24),
+                          elevation: 8,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          // Hacemos la tarjeta un poco transparente
+                          color: Colors.white.withOpacity(0.9),
+                          child: const LoginForm(),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // --- DETALLE 5: BOTÓN DE TEXTO ADAPTADO ---
+                        TextButton(
+                          onPressed: () {
+                            context.push('/register');
+                          },
+                          child: const Text(
+                            '¿No tienes una cuenta? Regístrate',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
