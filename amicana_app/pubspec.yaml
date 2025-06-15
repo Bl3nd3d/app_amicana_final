@@ -49,7 +49,7 @@ flutter:
 
   # Declaración de la carpeta de imágenes
   assets:
-    - assets/images/
+  - assets/images/
 
   # Para agregar fuentes personalizadas (ejemplo)
   # fonts:

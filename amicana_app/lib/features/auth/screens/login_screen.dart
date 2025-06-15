@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
             children: [
               // --- CAMBIO 1: Tu imagen de fondo ---
               Image.asset(
-                'assets/images/fondo_app.png', // Usamos el nombre de tu archivo
+                'assets/images/fondo_app.webp', // Usamos el nombre de tu archivo
                 fit: BoxFit.cover,
               ),
 
@@ -68,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         // --- CAMBIO 2: Tu logo ---
                         Image.asset(
-                          'assets/images/logo_app.png', // Usamos el nombre de tu logo
+                          'assets/images/logo_app.jpg', // Usamos el nombre de tu logo
                           height: 150, // Ajusta la altura si es necesario
                         ),
                         const SizedBox(height: 8),
