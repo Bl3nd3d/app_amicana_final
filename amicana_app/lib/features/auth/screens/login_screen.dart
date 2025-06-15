@@ -10,7 +10,6 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos un Scaffold sin appBar para un look de pantalla completa
     return Scaffold(
       body: BlocProvider(
         create: (context) => AuthBloc(),
@@ -37,17 +36,16 @@ class LoginScreen extends StatelessWidget {
                 );
             }
           },
-          // Usamos un Stack para poner la imagen de fondo y el contenido encima
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // --- DETALLE 1: IMAGEN DE FONDO ---
+              // --- CAMBIO 1: Tu imagen de fondo ---
               Image.asset(
-                'assets/images/welcome_background.png', // Reutilizamos la misma imagen de fondo
+                'assets/images/fondo_app.png', // Usamos el nombre de tu archivo
                 fit: BoxFit.cover,
               ),
-              // --- DETALLE 2: CAPA OSCURA PARA LEGIBILIDAD ---
-              // Un degradado oscuro hace que el texto blanco resalte más
+
+              // Capa oscura para legibilidad
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -60,15 +58,19 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              // Capa con el contenido principal
+
+              // Contenido principal
               SafeArea(
                 child: Center(
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // --- DETALLE 3: ICONO Y TEXTOS ADAPTADOS ---
-                        const Icon(Icons.school, size: 80, color: Colors.white),
+                        // --- CAMBIO 2: Tu logo ---
+                        Image.asset(
+                          'assets/images/logo_app.png', // Usamos el nombre de tu logo
+                          height: 150, // Ajusta la altura si es necesario
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'Inicio de Sesión',
@@ -82,22 +84,17 @@ class LoginScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
 
-                        // --- DETALLE 4: TARJETA PARA EL FORMULARIO ---
-                        // Envolvemos el LoginForm en una Card para darle un fondo
-                        // y que los campos de texto sean fáciles de leer.
                         Card(
                           margin: const EdgeInsets.symmetric(horizontal: 24),
                           elevation: 8,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          // Hacemos la tarjeta un poco transparente
                           color: Colors.white.withOpacity(0.9),
                           child: const LoginForm(),
                         ),
                         const SizedBox(height: 24),
 
-                        // --- DETALLE 5: BOTÓN DE TEXTO ADAPTADO ---
                         TextButton(
                           onPressed: () {
                             context.push('/register');

@@ -1,6 +1,6 @@
 name: amicana_app
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: 'none' 
 version: 1.0.0+1
 
 environment:
@@ -28,11 +28,11 @@ dependencies:
   # Almacenamiento Local
   shared_preferences: ^2.2.3
 
-  # Firebase
-  firebase_core: ^3.1.1
-  firebase_auth: ^5.1.1
-  cloud_firestore: ^5.0.2
-  firebase_storage: ^12.1.0
+  # Firebase (versiones actualizadas a junio de 2025)
+  firebase_core: ^2.31.0
+  firebase_auth: ^4.19.4
+  cloud_firestore: ^4.17.2
+  firebase_storage: ^11.7.4
 
 
 dev_dependencies:
@@ -40,7 +40,7 @@ dev_dependencies:
     sdk: flutter
   
   flutter_lints: ^3.0.0
-  flutterfire_cli: 1.2.0
+  flutterfire_cli: ^1.2.0 # <-- CORREGIDO: Se añadió el ^
 
 
 # --- SECCIÓN ÚNICA Y CORRECTA DE FLUTTER ---
