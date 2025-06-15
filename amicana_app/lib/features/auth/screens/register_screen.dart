@@ -10,7 +10,6 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // La lógica del BLoC ahora envuelve toda la pantalla
       body: BlocProvider(
         create: (context) => AuthBloc(),
         child: BlocListener<AuthBloc, AuthState>(
@@ -18,41 +17,29 @@ class RegisterScreen extends StatelessWidget {
             if (state is RegistrationSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('¡Registro exitoso! Por favor, inicia sesión.'),
-                  backgroundColor: Colors.green,
-                ),
+                    content:
+                        Text('¡Registro exitoso! Por favor, inicia sesión.'),
+                    backgroundColor: Colors.green),
               );
               context.go('/login');
             } else if (state is AuthFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.error),
-                  backgroundColor: Colors.red,
-                ),
+                    content: Text(state.error), backgroundColor: Colors.red),
               );
             }
           },
-          // Stack para el fondo y el contenido
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Capa 1: Imagen de Fondo
-              Image.asset(
-                'assets/images/fondo_app.png',
-                fit: BoxFit.cover,
-              ),
-              // Capa 2: Capa oscura para legibilidad
-              Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
-              // Capa 3: Contenido principal
+              Image.asset('assets/images/fondo_app.webp', fit: BoxFit.cover),
+              Container(color: Colors.black.withOpacity(0.5)),
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Botón para cerrar (volver atrás)
                       Align(
                         alignment: Alignment.topLeft,
                         child: IconButton(
@@ -62,7 +49,6 @@ class RegisterScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Título
                       const Text(
                         'Sign up to A.M.I.C.A.N.A.',
                         textAlign: TextAlign.center,
@@ -74,32 +60,45 @@ class RegisterScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      // Formulario de Registro
-                      const RegisterForm(),
-                      const Spacer(),
+
+                      // --- CAMBIO PRINCIPAL AQUÍ ---
+                      // Usamos Expanded para que el formulario ocupe el espacio central
+                      // y empuje el enlace de "Sign In" hacia abajo.
+                      // También usamos SingleChildScrollView para evitar que el teclado
+                      // cause un desbordamiento de píxeles.
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: const RegisterForm(),
+                        ),
+                      ),
+                      // El Spacer() que causaba el crash ha sido eliminado.
+                      // --- FIN DEL CAMBIO ---
+
                       // Enlace para Iniciar Sesión
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Already have an account? ",
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                          TextButton(
-                            onPressed: () => context.go('/login'),
-                            child: const Text(
-                              'Sign In',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Already have an account? ",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            TextButton(
+                              onPressed: () => context.go('/login'),
+                              child: const Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
