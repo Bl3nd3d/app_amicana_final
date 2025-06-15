@@ -16,6 +16,8 @@ import 'package:amicana_app/features/library/screens/library_home_screen.dart';
 import 'package:amicana_app/features/library/screens/book_detail_screen.dart';
 import 'package:amicana_app/features/quizzes/screens/quizzes_list_screen.dart';
 import 'package:amicana_app/features/quizzes/screens/quiz_player_screen.dart';
+import 'package:amicana_app/features/profile/screens/profile_screen.dart';
+import 'package:amicana_app/features/profile/screens/progress_screen.dart';
 // ----------------------------------------------------
 
 class AppRouter {
@@ -31,6 +33,11 @@ class AppRouter {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
+        path: '/progress',
+        name: 'progress',
+        builder: (context, state) => const ProgressScreen(),
+      ),
+      GoRoute(
         path: '/register',
         name: 'register',
         builder: (context, state) => const RegisterScreen(),
@@ -43,7 +50,11 @@ class AppRouter {
           return RoleSelectionScreen(user: user);
         },
       ),
-
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
       // --- Rutas de Biblioteca ---
       GoRoute(
         path: '/library',
