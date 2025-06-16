@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:amicana_app/features/library/models/book_model.dart';
-import '../bloc/library_bloc.dart';
-import '../widgets/book_card.dart';
+import 'package:amicana_app/features/library/bloc/library_bloc.dart';
+import 'package:amicana_app/features/library/widgets/book_card.dart';
 
 class LibraryHomeScreen extends StatelessWidget {
   const LibraryHomeScreen({super.key});
@@ -62,7 +61,7 @@ class LibraryHomeScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       pinned: true,
-      automaticallyImplyLeading: false, // Oculta el botón de atrás por defecto
+      automaticallyImplyLeading: false,
       title: Text(
         'Welcome, Tincho 👋',
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -113,7 +112,6 @@ class LibraryHomeScreen extends StatelessWidget {
             color: Colors.blue[200]!,
             icon: Icons.quiz,
             onTap: () => context.go('/quizzes')),
-        // --- MODIFICACIÓN: AÑADIDO ONTAP AL BOTÓN DE LIBROS ---
         _TopicButton(
             title: 'Books',
             color: Colors.blue[200]!,
@@ -124,7 +122,10 @@ class LibraryHomeScreen extends StatelessWidget {
             color: Colors.green[200]!,
             icon: Icons.spellcheck),
         _TopicButton(
-            title: 'Courses', color: Colors.orange[200]!, icon: Icons.school),
+            title: 'Progress',
+            color: Colors.purple[200]!,
+            icon: Icons.show_chart,
+            onTap: () => context.go('/progress')),
       ],
     );
   }
@@ -168,21 +169,18 @@ class LibraryHomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF13274F),
       selectedItemColor: Colors.blue[300],
       unselectedItemColor: Colors.white54,
-      currentIndex: 0, // 'Home' es el ítem 0
+      currentIndex: 0,
       onTap: (index) {
-        // --- LÓGICA DE NAVEGACIÓN ACTUALIZADA ---
         switch (index) {
-          case 0: // Home
-            context.go(
-                '/library'); // La pantalla de Home es nuestra LibraryHomeScreen
-            break;
-          case 2: // Library (puede ser redundante, pero lo dejamos por si se expande)
+          case 0:
             context.go('/library');
             break;
-          case 4: // Profile
-            context.go('/profile'); // Navega a la pantalla de Perfil
+          case 2:
+            context.go('/library');
             break;
-          // Los otros botones (Search, Saved) no hacen nada por ahora
+          case 4:
+            context.go('/profile');
+            break;
         }
       },
       items: const [
@@ -197,8 +195,9 @@ class LibraryHomeScreen extends StatelessWidget {
       ],
     );
   }
-}
+} // <-- FIN DE LA CLASE LibraryHomeScreen
 
+// LA CLASE _TopicButton EMPIEZA AQUÍ, FUERA DE LA ANTERIOR
 class _TopicButton extends StatelessWidget {
   final String title;
   final Color color;
@@ -206,7 +205,8 @@ class _TopicButton extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _TopicButton(
-      {required this.title,
+      {super.key,
+      required this.title,
       required this.color,
       required this.icon,
       this.onTap});

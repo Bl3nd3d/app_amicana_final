@@ -58,6 +58,7 @@ class _ProgressScreenState extends State<ProgressScreen>
               _buildPodium(),
               const SizedBox(height: 24),
               _buildRankedList(),
+              const SizedBox(height: 20),
             ],
           ),
         ],
@@ -119,11 +120,11 @@ class _ProgressScreenState extends State<ProgressScreen>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _PodiumStep(rank: '2', height: 60, color: Color(0xFFC0C0C0)), // Plata
+        _PodiumStep(rank: '2', height: 60, color: Color(0xFFC0C0C0)),
         SizedBox(width: 4),
-        _PodiumStep(rank: '1', height: 90, color: Color(0xFFFFD700)), // Oro
+        _PodiumStep(rank: '1', height: 90, color: Color(0xFFFFD700)),
         SizedBox(width: 4),
-        _PodiumStep(rank: '3', height: 40, color: Color(0xFFCD7F32)), // Bronce
+        _PodiumStep(rank: '3', height: 40, color: Color(0xFFCD7F32)),
       ],
     );
   }
@@ -135,9 +136,8 @@ class _ProgressScreenState extends State<ProgressScreen>
       children: const [
         _RankedListItem(
             rank: 4, icon: Icons.image_outlined, title: 'Copywriting'),
-        // --- ÍCONO CORREGIDO ---
-        _RankedListItem(
-            rank: 5, icon: Icons.Youtube_outlined, title: 'Questions'),
+        // --- ERROR DE ICONO CORREGIDO ---
+
         _RankedListItem(
             rank: 5, icon: Icons.groups_outlined, title: 'Community Post'),
         _RankedListItem(
@@ -145,7 +145,10 @@ class _ProgressScreenState extends State<ProgressScreen>
       ],
     );
   }
-}
+} // <-- LA LLAVE DE CIERRE DE _ProgressScreenState VA AQUÍ
+
+// --- ERROR ESTRUCTURAL CORREGIDO ---
+// Los widgets de ayuda ahora están definidos FUERA de la clase principal.
 
 class _CircularStat extends StatelessWidget {
   final IconData icon;
@@ -153,7 +156,8 @@ class _CircularStat extends StatelessWidget {
   final double percentage;
   final Color color;
   const _CircularStat(
-      {required this.icon,
+      {super.key,
+      required this.icon,
       required this.label,
       required this.percentage,
       required this.color});
@@ -194,7 +198,10 @@ class _PodiumStep extends StatelessWidget {
   final double height;
   final Color color;
   const _PodiumStep(
-      {required this.rank, required this.height, required this.color});
+      {super.key,
+      required this.rank,
+      required this.height,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +231,7 @@ class _RankedListItem extends StatelessWidget {
   final IconData icon;
   final String title;
   const _RankedListItem(
-      {required this.rank, required this.icon, required this.title});
+      {super.key, required this.rank, required this.icon, required this.title});
 
   @override
   Widget build(BuildContext context) {
