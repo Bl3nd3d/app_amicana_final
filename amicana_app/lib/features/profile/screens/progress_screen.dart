@@ -136,8 +136,6 @@ class _ProgressScreenState extends State<ProgressScreen>
       children: const [
         _RankedListItem(
             rank: 4, icon: Icons.image_outlined, title: 'Copywriting'),
-        // --- ERROR DE ICONO CORREGIDO ---
-
         _RankedListItem(
             rank: 5, icon: Icons.groups_outlined, title: 'Community Post'),
         _RankedListItem(
@@ -145,10 +143,7 @@ class _ProgressScreenState extends State<ProgressScreen>
       ],
     );
   }
-} // <-- LA LLAVE DE CIERRE DE _ProgressScreenState VA AQUÍ
-
-// --- ERROR ESTRUCTURAL CORREGIDO ---
-// Los widgets de ayuda ahora están definidos FUERA de la clase principal.
+}
 
 class _CircularStat extends StatelessWidget {
   final IconData icon;

@@ -52,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () {},
+            onPressed: () => context.go('/settings'),
           ),
         ],
       ),
@@ -104,7 +104,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  // --- WIDGET DE ESTADÍSTICAS RECONSTRUIDO MANUALMENTE ---
   Widget _buildStatsGrid(
       String courses, String score, String days, String rings) {
     return Column(
@@ -207,7 +206,6 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 }
 
-// El widget _StatCard ahora puede ser más simple
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String value;
@@ -250,7 +248,6 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// Widget _ProgressListItem (sin cambios)
 class _ProgressListItem extends StatelessWidget {
   final IconData icon;
   final String title;
