@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 
-// --- Modelos ---
+// Modelos
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
-import 'package:amicana_app/core/models/chapter_model.dart';
+import 'package:amicana_app/core/models/chapter_model.dart'; // Corregí la ruta si estaba en 'core'
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
 
-// --- Pantallas ---
+// Pantallas
 import 'package:amicana_app/features/auth/screens/login_screen.dart';
 import 'package:amicana_app/features/auth/screens/register_screen.dart';
 import 'package:amicana_app/features/auth/screens/role_selection_screen.dart';
@@ -27,24 +27,16 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     initialLocation: '/login',
-
-    // Guardián de rutas para proteger la app
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = firebase.FirebaseAuth.instance.currentUser != null;
       final bool isPublicRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 
-      if (!loggedIn && !isPublicRoute) {
-        return '/login';
-      }
-      if (loggedIn && isPublicRoute) {
-        return '/library';
-      }
+      if (!loggedIn && !isPublicRoute) return '/login';
+      if (loggedIn && isPublicRoute) return '/library';
       return null;
     },
-
     routes: [
-      // Rutas de Autenticación
       GoRoute(
           path: '/login',
           name: 'login',
@@ -58,8 +50,6 @@ class AppRouter {
           name: 'selectRole',
           builder: (context, state) =>
               RoleSelectionScreen(user: state.extra as User)),
-
-      // Rutas de Biblioteca / Home
       GoRoute(
           path: '/library',
           name: 'library',
@@ -67,14 +57,17 @@ class AppRouter {
       GoRoute(
           path: '/books',
           name: 'books',
-          builder: (context, state) => const BookListScreen()), // Nueva ruta
+          builder: (context, state) => const BookListScreen()),
       GoRoute(
-          path: '/library/book/:bookId', // Ruta para el detalle de un libro
+          path: '/library/book/:bookId',
           name: 'bookDetail',
-          builder: (context, state) =>
-              BookDetailScreen(book: state.extra as Book),
+          // --- CAMBIO PRINCIPAL AQUÍ ---
+          // Ahora extraemos el ID de la URL y se lo pasamos a la pantalla.
+          builder: (context, state) {
+            final bookId = state.pathParameters['bookId']!;
+            return BookDetailScreen(bookId: bookId);
+          },
           routes: [
-            // Ruta anidada para el detalle de un capítulo
             GoRoute(
               path: 'chapter/:chapterId',
               name: 'chapterDetail',
@@ -87,22 +80,17 @@ class AppRouter {
               },
             )
           ]),
-
-      // Rutas de Trivias
       GoRoute(
           path: '/quizzes',
           name: 'quizzes',
           builder: (context, state) => const QuizzesListScreen(),
           routes: [
             GoRoute(
-              path: 'quiz/:quizId',
-              name: 'quizPlayer',
-              builder: (context, state) =>
-                  QuizPlayerScreen(quiz: state.extra as Quiz),
-            )
+                path: 'quiz/:quizId',
+                name: 'quizPlayer',
+                builder: (context, state) =>
+                    QuizPlayerScreen(quiz: state.extra as Quiz)),
           ]),
-
-      // Rutas de Perfil
       GoRoute(
           path: '/profile',
           name: 'profile',
@@ -116,8 +104,6 @@ class AppRouter {
           name: 'progress',
           builder: (context, state) => const ProgressScreen()),
     ],
-
-    // Pantalla de Error 404
     errorBuilder: (context, state) => Scaffold(
       appBar: AppBar(title: const Text('Página no encontrada')),
       body: Center(

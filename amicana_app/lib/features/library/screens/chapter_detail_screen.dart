@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
-import 'package:url_launcher/url_launcher.dart'; // <-- 1. IMPORTACIÓN AÑADIDA
+import 'package:url_launcher/url_launcher.dart';
 
 class ChapterDetailScreen extends StatelessWidget {
   final Book book;
@@ -13,23 +13,17 @@ class ChapterDetailScreen extends StatelessWidget {
     required this.chapter,
   });
 
-  // --- 2. FUNCIÓN DE AYUDA AÑADIDA ---
-  // Esta función intenta abrir la URL que le pasemos.
+  // Función para abrir enlaces externos
   Future<void> _launchURL(BuildContext context, String? urlString) async {
-    // Primero, verificamos si la URL existe y no está vacía
     if (urlString == null || urlString.isEmpty) {
-      // Si no hay URL, mostramos un mensaje al usuario
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('No hay un archivo disponible para este capítulo.')),
+        const SnackBar(content: Text('No hay un archivo disponible.')),
       );
       return;
     }
 
-    // Si hay URL, intentamos abrirla
     final Uri url = Uri.parse(urlString);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      // Si no se puede abrir, mostramos un error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('No se pudo abrir el enlace: $urlString')),
       );
@@ -68,12 +62,9 @@ class ChapterDetailScreen extends StatelessWidget {
                         .titleLarge
                         ?.copyWith(color: Colors.white70)),
                 const Divider(height: 32, color: Colors.white24),
-
-                // --- 3. BOTONES CON LÓGICA REAL ---
                 _ContentButton(
                   icon: Icons.headset,
                   label: 'Escuchar Audio',
-                  // El botón ahora llama a nuestra función _launchURL
                   onTap: () => _launchURL(context, chapter.audioUrl),
                 ),
                 const SizedBox(height: 16),
@@ -83,7 +74,6 @@ class ChapterDetailScreen extends StatelessWidget {
                   onTap: () => _launchURL(context, chapter.pdfUrl),
                 ),
                 const Divider(height: 32, color: Colors.white24),
-
                 Text('Sinopsis del Capítulo',
                     style: Theme.of(context)
                         .textTheme
@@ -107,7 +97,7 @@ class ChapterDetailScreen extends StatelessWidget {
   }
 }
 
-// Widget de ayuda para los botones
+// Widget de ayuda para los botones de contenido
 class _ContentButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -124,7 +114,6 @@ class _ContentButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        // Si onTap es nulo (no hay URL), el botón se verá deshabilitado
         backgroundColor:
             onTap != null ? Theme.of(context).primaryColor : Colors.grey[800],
         foregroundColor: Colors.white,

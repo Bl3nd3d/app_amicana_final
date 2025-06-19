@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:amicana_app/firebase_options.dart';
-
 import 'package:amicana_app/app/routes/app_router.dart';
 import 'package:amicana_app/app/theme/app_theme.dart';
 import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
 
 void main() async {
-  // Asegura que los bindings de Flutter estén listos
+  // Asegura que los componentes de Flutter estén listos
   WidgetsFlutterBinding.ensureInitialized();
 
   // Inicializa Firebase
@@ -17,9 +16,8 @@ void main() async {
   );
 
   runApp(
-    // --- AQUÍ ESTÁ LA SOLUCIÓN ---
     // Envolvemos toda la aplicación en el BlocProvider para que AuthBloc
-    // esté disponible en todas las pantallas.
+    // esté disponible en todas las pantallas desde el inicio.
     BlocProvider(
       create: (context) => AuthBloc(),
       child: const MyApp(),
@@ -32,6 +30,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MaterialApp.router usa nuestro enrutador personalizado para controlar la navegación.
     return MaterialApp.router(
       title: 'A.M.I.C.A.N.A. App',
       debugShowCheckedModeBanner: false,

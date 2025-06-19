@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
-
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
@@ -17,9 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
+      if (mounted) setState(() {});
     });
   }
 
@@ -49,10 +46,11 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
         title: const Text('Profile',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () => context.go('/settings'),
+            onPressed: () => context.push('/settings'), // <-- USA PUSH
           ),
         ],
       ),
@@ -295,26 +293,23 @@ class _ProgressListItem extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
-                  minHeight: 6,
-                  borderRadius: BorderRadius.circular(3),
-                ),
+          Row(children: [
+            Expanded(
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: Colors.white.withOpacity(0.2),
+                valueColor: AlwaysStoppedAnimation<Color>(color),
+                minHeight: 6,
+                borderRadius: BorderRadius.circular(3),
               ),
-              const SizedBox(width: 16),
-              Text(progressText,
-                  style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold)),
-            ],
-          )
+            ),
+            const SizedBox(width: 16),
+            Text(progressText,
+                style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold)),
+          ])
         ],
       ),
     );

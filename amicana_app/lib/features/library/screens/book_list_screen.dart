@@ -8,12 +8,13 @@ class BookListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Usamos el BlocProvider para tener acceso al LibraryBloc
     return BlocProvider(
       create: (context) => LibraryBloc()..add(FetchBooks()),
       child: Scaffold(
         backgroundColor: const Color(0xFF0A183C),
         appBar: AppBar(
-          title: const Text('Biblioteca'),
+          title: const Text('Biblioteca Digital'),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -26,12 +27,14 @@ class BookListScreen extends StatelessWidget {
                     fit: BoxFit.cover),
               ),
             ),
+            // El BlocBuilder reacciona a los estados del LibraryBloc
             BlocBuilder<LibraryBloc, LibraryState>(
               builder: (context, state) {
                 if (state is LibraryLoading || state is LibraryInitial) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is LibraryLoaded) {
+                  // Si los libros se cargaron, muestra la cuadrícula
                   return GridView.builder(
                     padding: const EdgeInsets.all(16.0),
                     gridDelegate:
@@ -44,6 +47,7 @@ class BookListScreen extends StatelessWidget {
                     itemCount: state.books.length,
                     itemBuilder: (context, index) {
                       final book = state.books[index];
+                      // Reutilizamos el BookCard que ya teníamos
                       return BookCard(book: book);
                     },
                   );
@@ -51,7 +55,7 @@ class BookListScreen extends StatelessWidget {
                 if (state is LibraryError) {
                   return Center(
                       child: Text(state.message,
-                          style: TextStyle(color: Colors.white)));
+                          style: const TextStyle(color: Colors.white)));
                 }
                 return const Center(
                     child: Text('Algo salió mal.',

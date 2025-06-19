@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
+import 'package:amicana_app/features/library/services/library_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -27,7 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Settings',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
-      // El BlocListener reacciona al cambio de estado después de presionar "Cerrar Sesión"
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthInitial) {
@@ -93,7 +94,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: () {}),
                 ]),
                 const SizedBox(height: 20),
-                // Grupo con el botón de Cerrar Sesión
                 _buildSettingsGroup([
                   _buildSettingsTile(context,
                       icon: Icons.help_outline,
@@ -102,13 +102,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.redAccent),
                     title: const Text('Cerrar Sesión',
-                        style: TextStyle(color: Colors.redAccent)),
+                        style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.w500)),
                     onTap: () {
-                      // Este context.read ahora funciona porque el Provider está en main.dart
                       context.read<AuthBloc>().add(LogoutButtonPressed());
                     },
                   ),
                 ]),
+
+                // Botón de Desarrollador (Solo visible en modo debug)
+                if (kDebugMode)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: Column(
+                      children: [
+                        const Text('Opciones de Desarrollador',
+                            style: TextStyle(color: Colors.yellowAccent)),
+                        const SizedBox(height: 10),
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.biotech_outlined),
+                          label:
+                              const Text('Cargar Datos de Prueba a Firestore'),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange[800]),
+                          onPressed: () async {
+                            // Muestra un diálogo de confirmación para seguridad
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Confirmar Acción'),
+                                content: const Text(
+                                    'Esto borrará los libros existentes y cargará los de prueba. ¿Estás seguro?'),
+                                actions: [
+                                  TextButton(
+                                    child: const Text('Cancelar'),
+                                    onPressed: () => Navigator.of(ctx).pop(),
+                                  ),
+                                  FilledButton(
+                                    child: const Text('Sí, Cargar Datos'),
+                                    onPressed: () async {
+                                      Navigator.of(ctx).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Iniciando carga...')),
+                                      );
+                                      try {
+                                        await LibraryService().seedDatabase();
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    '¡Datos de prueba cargados a Firestore!'),
+                                                backgroundColor: Colors.green),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content:
+                                                    Text('Error al cargar: $e'),
+                                                backgroundColor: Colors.red),
+                                          );
+                                        }
+                                      }
+                                    },
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ],
@@ -117,6 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Widget de ayuda para crear los grupos de opciones
   Widget _buildSettingsGroup(List<Widget> children) {
     return Container(
       decoration: BoxDecoration(
@@ -135,6 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // Widget de ayuda para crear cada fila de opción
   Widget _buildSettingsTile(BuildContext context,
       {required IconData icon,
       required String title,
