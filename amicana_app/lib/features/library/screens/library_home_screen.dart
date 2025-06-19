@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:amicana_app/features/library/bloc/library_bloc.dart';
 import 'package:amicana_app/features/library/widgets/book_card.dart';
 
@@ -57,21 +58,33 @@ class LibraryHomeScreen extends StatelessWidget {
   }
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    String userName = 'Guest';
+
+    if (currentUser?.email != null && currentUser!.email!.isNotEmpty) {
+      userName = currentUser.email!.split('@').first;
+      userName = userName.substring(0, 1).toUpperCase() + userName.substring(1);
+    } else if (currentUser?.displayName != null &&
+        currentUser!.displayName!.isNotEmpty) {
+      userName = currentUser.displayName!;
+    }
+
     return SliverAppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       pinned: true,
       automaticallyImplyLeading: false,
       title: Text(
-        'Welcome, Tincho 👋',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        'Welcome, $userName 👋',
+        style:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: CircleAvatar(
-            backgroundImage:
-                NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
+            backgroundImage: NetworkImage(
+                currentUser?.photoURL ?? 'https://i.pravatar.cc/150'),
           ),
         ),
       ],
@@ -116,7 +129,8 @@ class LibraryHomeScreen extends StatelessWidget {
             title: 'Books',
             color: Colors.blue[200]!,
             icon: Icons.book,
-            onTap: () => context.go('/library')),
+            onTap: () =>
+                context.go('/books')), // Corregido para ir a la lista de libros
         _TopicButton(
             title: 'Grammar',
             color: Colors.green[200]!,
@@ -172,13 +186,13 @@ class LibraryHomeScreen extends StatelessWidget {
       currentIndex: 0,
       onTap: (index) {
         switch (index) {
-          case 0:
+          case 0: // Home
             context.go('/library');
             break;
-          case 2:
-            context.go('/library');
+          case 2: // Library (Podría ser la pantalla de lista de libros)
+            context.go('/books');
             break;
-          case 4:
+          case 4: // Profile
             context.go('/profile');
             break;
         }
@@ -195,9 +209,8 @@ class LibraryHomeScreen extends StatelessWidget {
       ],
     );
   }
-} // <-- FIN DE LA CLASE LibraryHomeScreen
+}
 
-// LA CLASE _TopicButton EMPIEZA AQUÍ, FUERA DE LA ANTERIOR
 class _TopicButton extends StatelessWidget {
   final String title;
   final Color color;

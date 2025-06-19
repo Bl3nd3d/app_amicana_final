@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
+import 'package:amicana_app/core/models/chapter_model.dart';
 import 'package:amicana_app/features/library/bloc/book_detail/book_detail_bloc.dart';
 
 class BookDetailScreen extends StatelessWidget {
@@ -9,97 +11,142 @@ class BookDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Proveemos el nuevo BLoC a la pantalla, pasándole el libro actual.
+    // Proveemos el BLoC específico para esta pantalla
     return BlocProvider(
       create: (context) => BookDetailBloc(book: book),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(book.title),
-        ),
-        body: BlocBuilder<BookDetailBloc, BookDetailState>(
-          builder: (context, state) {
-            // Mientras el BLoC se inicializa, podemos mostrar un spinner.
-            if (state is! BookDetailLoaded) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            // Una vez cargado, mostramos el contenido.
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Hero(
+        backgroundColor: const Color(0xFF0A183C),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.3,
+                child: Image.asset('assets/images/fondo_app.png',
+                    fit: BoxFit.cover),
+              ),
+            ),
+            // Usamos un CustomScrollView para tener más control sobre el scroll y el AppBar
+            CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 300.0,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Hero(
                       tag: 'book-cover-${book.id}',
                       child: Image.network(
                         book.coverUrl,
-                        height: 300,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
+                        color: Colors.black.withOpacity(0.4),
+                        colorBlendMode: BlendMode.darken,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: Text(
-                      book.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                ),
+                // SliverList nos permite poner una lista dentro de un CustomScrollView
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          book.title,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'por ${book.author}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  color: Colors.white70,
+                                  fontStyle: FontStyle.italic),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          book.description,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.white.withOpacity(0.8)),
+                          textAlign: TextAlign.justify,
+                        ),
+                        const Divider(
+                            height: 40, thickness: 1, color: Colors.white24),
+                        Text(
+                          'Progreso de Lectura',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: Text(
-                      'por ${book.author}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    book.description,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.justify,
-                  ),
-                  const Divider(height: 40, thickness: 1),
-                  Text(
-                    'Progreso de Lectura',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  // Lista de capítulos interactiva
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: state.book.chapters.length,
-                    itemBuilder: (context, index) {
-                      final chapter = state.book.chapters[index];
-                      final isCompleted = state.progress.completedChapterIds
-                          .contains(chapter.id);
+                ),
+                // El BlocBuilder ahora envuelve solo a la lista de capítulos
+                BlocBuilder<BookDetailBloc, BookDetailState>(
+                  builder: (context, state) {
+                    if (state is BookDetailLoaded) {
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final chapter = state.book.chapters[index];
+                            final isCompleted = state
+                                .progress.completedChapterIds
+                                .contains(chapter.id);
 
-                      return CheckboxListTile(
-                        title: Text(chapter.title),
-                        value: isCompleted,
-                        onChanged: (bool? value) {
-                          // Al cambiar, disparamos el evento al BLoC
-                          context
-                              .read<BookDetailBloc>()
-                              .add(ToggleChapterStatus(chapterId: chapter.id));
-                        },
-                        secondary: const Icon(Icons.bookmark_border),
-                        activeColor: Theme.of(context).primaryColor,
+                            // --- ESTE ES TU CÓDIGO INTEGRADO ---
+                            return ListTile(
+                              leading: Checkbox(
+                                value: isCompleted,
+                                onChanged: (bool? value) {
+                                  context.read<BookDetailBloc>().add(
+                                      ToggleChapterStatus(
+                                          chapterId: chapter.id));
+                                },
+                                activeColor: Theme.of(context).primaryColor,
+                                checkColor: Colors.white,
+                                side: const BorderSide(color: Colors.white54),
+                              ),
+                              title: Text(chapter.title,
+                                  style: const TextStyle(color: Colors.white)),
+                              onTap: () {
+                                context.go(
+                                  '/library/book/${state.book.id}/chapter/${chapter.id}',
+                                  extra: {
+                                    'book': state.book,
+                                    'chapter': chapter
+                                  },
+                                );
+                              },
+                              trailing: const Icon(Icons.arrow_forward_ios,
+                                  color: Colors.white54, size: 16),
+                            );
+                          },
+                          childCount: state.book.chapters.length,
+                        ),
                       );
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
+                    }
+                    // Si no está cargado, no mostramos nada o un spinner
+                    return const SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

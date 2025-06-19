@@ -1,15 +1,30 @@
-import 'package:amicana_app/firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'app/routes/app_router.dart'; // Importa el enrutador
-import 'app/theme/app_theme.dart'; // Importa el tema
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:amicana_app/firebase_options.dart';
 
-Future<void> main() async {
+import 'package:amicana_app/app/routes/app_router.dart';
+import 'package:amicana_app/app/theme/app_theme.dart';
+import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
+
+void main() async {
+  // Asegura que los bindings de Flutter estén listos
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializa Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  runApp(
+    // --- AQUÍ ESTÁ LA SOLUCIÓN ---
+    // Envolvemos toda la aplicación en el BlocProvider para que AuthBloc
+    // esté disponible en todas las pantallas.
+    BlocProvider(
+      create: (context) => AuthBloc(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,12 +32,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos MaterialApp.router para que la navegación la controle GoRouter
     return MaterialApp.router(
       title: 'A.M.I.C.A.N.A. App',
-      debugShowCheckedModeBanner: false, // Oculta la cinta de "Debug"
-
-      // Asignamos el tema y el enrutador que creamos
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       routerConfig: AppRouter.router,
     );

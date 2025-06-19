@@ -22,3 +22,5 @@ class RegisterButtonPressed extends AuthEvent {
 }
 
 class GoogleSignInButtonPressed extends AuthEvent {}
+
+class LogoutButtonPressed extends AuthEvent {}

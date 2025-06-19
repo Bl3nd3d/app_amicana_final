@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/auth_bloc.dart';
+import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -21,23 +21,14 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  void _onLoginPressed() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-            LoginButtonPressed(
-              email: _emailController.text,
-              password: _passwordController.text,
-            ),
-          );
-    }
-  }
+  // Ya no necesitamos el método _onLoginPressed separado
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0), // Aumentamos el padding interno
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -45,32 +36,21 @@ class _LoginFormState extends State<LoginForm> {
               controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Correo Electrónico',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
+                prefixIcon: Icon(Icons.email_outlined),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value == null || value.isEmpty || !value.contains('@')) {
-                  return 'Por favor, ingresa un correo válido';
-                }
-                return null;
-              },
+              validator: (v) =>
+                  v!.isEmpty || !v.contains('@') ? 'Correo inválido' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Contraseña',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
+                prefixIcon: Icon(Icons.lock_outline),
               ),
               obscureText: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, ingresa tu contraseña';
-                }
-                return null;
-              },
+              validator: (v) => v!.isEmpty ? 'Ingresa tu contraseña' : null,
             ),
             const SizedBox(height: 24),
             BlocBuilder<AuthBloc, AuthState>(
@@ -79,7 +59,24 @@ class _LoginFormState extends State<LoginForm> {
                   return const CircularProgressIndicator();
                 }
                 return ElevatedButton(
-                  onPressed: _onLoginPressed,
+                  // --- CORRECCIÓN PRINCIPAL AQUÍ ---
+                  // La lógica ahora está directamente en el onPressed,
+                  // usando el 'context' que nos da el BlocBuilder.
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Este 'context' SÍ puede ver el Provider.
+                      context.read<AuthBloc>().add(
+                            LoginButtonPressed(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                            ),
+                          );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
                   child: const Text('Ingresar'),
                 );
               },

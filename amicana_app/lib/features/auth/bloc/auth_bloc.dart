@@ -43,5 +43,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(error: e.toString().replaceFirst('Exception: ', '')));
       }
     });
+
+    on<LogoutButtonPressed>((event, emit) async {
+      try {
+        await _authService.logout();
+        // Emitimos el estado inicial para indicar que ya no hay un usuario logueado.
+        emit(AuthInitial());
+      } catch (e) {
+        // Opcional: manejar cualquier error que pudiera ocurrir al desloguear
+        print('Error al cerrar sesión: $e');
+      }
+    });
   }
 }
