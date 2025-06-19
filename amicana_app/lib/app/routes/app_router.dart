@@ -28,8 +28,8 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/login',
     redirect: (BuildContext context, GoRouterState state) {
-      final loggedIn = firebase.FirebaseAuth.instance.currentUser != null;
-      final isPublicRoute = state.matchedLocation == '/login' ||
+      final bool loggedIn = firebase.FirebaseAuth.instance.currentUser != null;
+      final bool isPublicRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
       if (!loggedIn && !isPublicRoute) return '/login';
       if (loggedIn && isPublicRoute) return '/library';
@@ -49,30 +49,21 @@ class AppRouter {
           name: 'selectRole',
           builder: (context, state) =>
               RoleSelectionScreen(user: state.extra as User)),
-
-      // La pantalla de Home principal sigue siendo /library
       GoRoute(
           path: '/library',
           name: 'library',
           builder: (context, state) => const LibraryHomeScreen()),
-
-      // --- ESTRUCTURA DE RUTAS DE LIBROS CORREGIDA ---
       GoRoute(
           path: '/books',
           name: 'books',
           builder: (context, state) => const BookListScreen(),
           routes: [
-            // La ruta de detalle ahora está ANIDADA aquí
             GoRoute(
-                path:
-                    ':bookId', // La ruta ahora es relativa a /books (ej: /books/un-id)
+                path: ':bookId',
                 name: 'bookDetail',
-                builder: (context, state) {
-                  final bookId = state.pathParameters['bookId']!;
-                  return BookDetailScreen(bookId: bookId);
-                },
+                builder: (context, state) =>
+                    BookDetailScreen(bookId: state.pathParameters['bookId']!),
                 routes: [
-                  // La ruta del capítulo se anida dentro del detalle del libro
                   GoRoute(
                     path: 'chapter/:chapterId',
                     name: 'chapterDetail',
@@ -84,9 +75,8 @@ class AppRouter {
                       );
                     },
                   )
-                ])
+                ]),
           ]),
-
       GoRoute(
           path: '/quizzes',
           name: 'quizzes',
@@ -98,7 +88,6 @@ class AppRouter {
                 builder: (context, state) =>
                     QuizPlayerScreen(quiz: state.extra as Quiz)),
           ]),
-
       GoRoute(
           path: '/profile',
           name: 'profile',

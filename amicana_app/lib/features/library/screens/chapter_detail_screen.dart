@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ChapterDetailScreen extends StatelessWidget {
@@ -14,9 +14,8 @@ class ChapterDetailScreen extends StatelessWidget {
     required this.chapter,
   });
 
-  // --- FUNCIÓN DE ABRIR ENLACES MEJORADA Y MÁS SEGURA ---
+  // Función para abrir enlaces externos
   Future<void> _launchURL(BuildContext context, String? urlString) async {
-    // 1. Verificamos si la URL es nula o está vacía (incluyendo espacios en blanco)
     if (urlString == null || urlString.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No hay un archivo disponible.')),
@@ -25,16 +24,11 @@ class ChapterDetailScreen extends StatelessWidget {
     }
 
     try {
-      // 2. Intentamos convertir el texto en una URL válida
       final Uri url = Uri.parse(urlString);
-
-      // 3. Verificamos si podemos lanzar la URL y lo hacemos
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-        throw Exception(
-            'No se pudo lanzar la URL'); // Lanzamos una excepción si falla
+        throw Exception('No se pudo lanzar la URL');
       }
     } catch (e) {
-      // 4. Si algo falla en el proceso, mostramos un error amigable
       print('Error al lanzar URL: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('No se pudo abrir el enlace: $urlString')),
@@ -44,7 +38,6 @@ class ChapterDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // El resto del build no cambia, ya que la lógica está en _launchURL
     return Scaffold(
       backgroundColor: const Color(0xFF0A183C),
       appBar: AppBar(
@@ -61,8 +54,8 @@ class ChapterDetailScreen extends StatelessWidget {
           Positioned.fill(
             child: Opacity(
               opacity: 0.3,
-              child:
-                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo_app.webp',
+                  fit: BoxFit.cover),
             ),
           ),
           Padding(
@@ -114,6 +107,7 @@ class ChapterDetailScreen extends StatelessWidget {
   }
 }
 
+// Widget de ayuda para los botones de contenido
 class _ContentButton extends StatelessWidget {
   final IconData icon;
   final String label;
