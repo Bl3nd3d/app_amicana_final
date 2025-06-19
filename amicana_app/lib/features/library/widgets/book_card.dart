@@ -9,9 +9,10 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      // --- LA CORRECCIÓN ESTÁ AQUÍ ---
       onTap: () {
-        // --- CAMBIO CLAVE: Usamos PUSH y solo navegamos con el ID ---
-        // La pantalla de detalle ahora buscará el libro usando su ID.
+        // Usamos PUSH para "apilar" la pantalla de detalle encima de la lista.
+        // Esto permite que `context.pop()` en la siguiente pantalla funcione para volver.
         context.push('/library/book/${book.id}');
       },
       child: Card(

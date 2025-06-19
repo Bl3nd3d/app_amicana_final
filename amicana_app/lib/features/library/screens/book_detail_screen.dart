@@ -6,32 +6,26 @@ import 'package:amicana_app/core/models/chapter_model.dart';
 import 'package:amicana_app/features/library/bloc/book_detail/book_detail_bloc.dart';
 
 class BookDetailScreen extends StatelessWidget {
-  // Ahora recibe el ID, no el objeto completo
   final String bookId;
   const BookDetailScreen({super.key, required this.bookId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // Creamos el BLoC y le decimos que cargue los datos con el ID recibido
       create: (context) =>
           BookDetailBloc()..add(FetchBookDetails(bookId: bookId)),
       child: Scaffold(
         backgroundColor: const Color(0xFF0A183C),
-        // El BlocBuilder escucha los estados y redibuja la UI
         body: BlocBuilder<BookDetailBloc, BookDetailState>(
           builder: (context, state) {
-            // Mientras carga, mostramos un spinner
             if (state is BookDetailLoading || state is BookDetailInitial) {
               return const Center(child: CircularProgressIndicator());
             }
-            // Si hay un error, lo mostramos
             if (state is BookDetailError) {
               return Center(
                   child: Text(state.message,
                       style: const TextStyle(color: Colors.white)));
             }
-            // Si los datos se cargaron, construimos la pantalla
             if (state is BookDetailLoaded) {
               final book = state.book;
               return CustomScrollView(
@@ -41,6 +35,12 @@ class BookDetailScreen extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     pinned: true,
+                    // --- BOTÓN DE VOLVER CON POP ---
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => context
+                          .pop(), // Pop para volver a la pantalla anterior
+                    ),
                     flexibleSpace: FlexibleSpaceBar(
                       background: Hero(
                         tag: 'book-cover-${book.id}',
@@ -131,7 +131,6 @@ class BookDetailScreen extends StatelessWidget {
                 ],
               );
             }
-            // En caso de un estado inesperado, no mostramos nada
             return const SizedBox.shrink();
           },
         ),
