@@ -1,86 +1,123 @@
-import 'package:amicana_app/core/api/api_client.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  // NO es necesario un ApiClient para esta simulación mejorada.
-  // final ApiClient _apiClient = ApiClient();
+  final firebase.FirebaseAuth _firebaseAuth = firebase.FirebaseAuth.instance;
 
-  // --- NUESTRA BASE DE DATOS EN MEMORIA ---
-  // Un mapa estático para que no se pierda entre instancias de la clase.
-  // Guardaremos los usuarios usando su email como clave.
-  static final Map<String, Map<String, dynamic>> _users = {
-    // Precargamos el usuario administrador
-    'admin@amicana.com': {
-      'id': '1',
-      'name': 'Admin User',
-      'password': 'admin123', // Guardamos la contraseña para verificarla
-      'roles': ['superusuario', 'usuario_normal'],
+  // Convierte un usuario de Firebase a nuestro modelo de User
+  User _userFromFirebase(firebase.User fbUser) {
+    return User(
+      id: fbUser.uid,
+      name: fbUser.displayName ?? 'No Name',
+      email: fbUser.email ?? 'No Email',
+      roles: ['usuario_normal'],
+    );
+  }
+
+  Future<User> login({required String email, required String password}) async {
+    try {
+      final credential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      if (credential.user == null) {
+        throw Exception('No se pudo iniciar sesión.');
+      }
+      if (email == 'admin@amicana.com') {
+        final user = _userFromFirebase(credential.user!);
+        return User(
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            roles: ['superusuario', 'usuario_normal']);
+      }
+      return _userFromFirebase(credential.user!);
+    } on firebase.FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' ||
+          e.code == 'wrong-password' ||
+          e.code == 'invalid-credential') {
+        throw Exception('Correo o contraseña incorrectos.');
+      } else {
+        throw Exception('Ocurrió un error: ${e.message}');
+      }
     }
-  };
+  }
+
+  Future<User> register(
+      {required String name,
+      required String email,
+      required String password}) async {
+    try {
+      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await credential.user?.updateDisplayName(name);
+      await credential.user?.reload();
+      final updatedUser = _firebaseAuth.currentUser;
+
+      if (updatedUser == null) {
+        throw Exception('No se pudo completar el registro.');
+      }
+      return _userFromFirebase(updatedUser);
+    } on firebase.FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        throw Exception('La contraseña es demasiado débil.');
+      } else if (e.code == 'email-already-in-use') {
+        throw Exception('El correo electrónico ya está en uso.');
+      } else {
+        throw Exception('Ocurrió un error: ${e.message}');
+      }
+    }
+  }
+
+  // --- MÉTODO AÑADIDO PARA LOGIN CON GOOGLE ---
+  Future<User> signInWithGoogle() async {
+    try {
+      // Inicia el flujo de inicio de sesión de Google
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        // El usuario canceló el proceso
+        throw Exception('Inicio de sesión con Google cancelado.');
+      }
+      // Obtiene los detalles de autenticación de la petición
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      // Crea una credencial de Firebase
+      final credential = firebase.GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      // Inicia sesión en Firebase con la credencial de Google
+      final userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+      if (userCredential.user == null) {
+        throw Exception('No se pudo iniciar sesión con Google.');
+      }
+      return _userFromFirebase(userCredential.user!);
+    } catch (e) {
+      // Re-lanza la excepción para que el BLoC pueda manejarla
+      throw Exception('Error al iniciar sesión con Google: ${e.toString()}');
+    }
+  }
+
+  Future<void> logout() async {
+    // También cerramos sesión de Google por si acaso
+    await GoogleSignIn().signOut();
+    await _firebaseAuth.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
 
   Future<void> saveSelectedRole(String role) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_role', role);
-    print('Rol guardado: $role');
   }
 
-  // --- MÉTODO DE LOGIN MEJORADO ---
-  Future<User> login({required String email, required String password}) async {
-    print(
-        'Verificando credenciales para $email en la base de datos en memoria...');
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Busca al usuario por su email en nuestro mapa.
-    if (_users.containsKey(email)) {
-      final userData = _users[email]!;
-      // Si el usuario existe, verifica que la contraseña coincida.
-      if (userData['password'] == password) {
-        final user = User(
-          id: userData['id'],
-          name: userData['name'],
-          email: email,
-          roles: List<String>.from(userData['roles']),
-        );
-        await _saveToken('un_token_jwt_simulado_para_${user.name}');
-        return user;
-      }
-    }
-    // Si el usuario no existe o la contraseña es incorrecta, lanza un error.
-    throw Exception('Credenciales incorrectas');
-  }
-
-  // --- MÉTODO DE REGISTRO MEJORADO ---
-  Future<void> register(
-      {required String name,
-      required String email,
-      required String password}) async {
-    print('Registrando a $name en la base de datos en memoria...');
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Verifica si el email ya existe en nuestro mapa.
-    if (_users.containsKey(email)) {
-      throw Exception('Este correo ya está registrado.');
-    }
-
-    // Si no existe, añade el nuevo usuario al mapa.
-    _users[email] = {
-      'id': DateTime.now().millisecondsSinceEpoch.toString(), // ID único
-      'name': name,
-      'password': password,
-      'roles': ['usuario_normal'], // Por defecto, todos son usuarios normales
-    };
-
-    print('Usuario registrado con éxito. Base de datos actual: $_users');
-  }
-
-  Future<void> _saveToken(String token) async {
+  Future<String?> getSelectedRole() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', token);
-  }
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    return prefs.getString('selected_role');
   }
 }

@@ -39,13 +39,10 @@ class LoginScreen extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // --- CAMBIO 1: Tu imagen de fondo ---
               Image.asset(
-                'assets/images/fondo_app.webp', // Usamos el nombre de tu archivo
+                'assets/images/fondo_app.png', // Corregí la extensión a .png como en tus archivos
                 fit: BoxFit.cover,
               ),
-
-              // Capa oscura para legibilidad
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -58,18 +55,15 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Contenido principal
               SafeArea(
                 child: Center(
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // --- CAMBIO 2: Tu logo ---
                         Image.asset(
-                          'assets/images/logo_app.jpg', // Usamos el nombre de tu logo
-                          height: 150, // Ajusta la altura si es necesario
+                          'assets/images/logo_app.png', // Corregí la extensión a .png
+                          height: 150,
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -83,7 +77,6 @@ class LoginScreen extends StatelessWidget {
                               ),
                         ),
                         const SizedBox(height: 24),
-
                         Card(
                           margin: const EdgeInsets.symmetric(horizontal: 24),
                           elevation: 8,
@@ -95,6 +88,33 @@ class LoginScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
 
+                        // --- WIDGETS AÑADIDOS PARA EL LOGIN CON GOOGLE ---
+                        const Text('O inicia sesión con',
+                            style: TextStyle(color: Colors.white70)),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          icon: Image.asset('assets/images/google_logo.png',
+                              height: 24),
+                          label: const Text('Sign in with Google'),
+                          onPressed: () {
+                            // Disparamos el evento para el login con Google
+                            context
+                                .read<AuthBloc>()
+                                .add(GoogleSignInButtonPressed());
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            minimumSize: const Size(
+                                220, 50), // Le damos un tamaño mínimo
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                        ),
+                        // --- FIN DE LOS WIDGETS AÑADIDOS ---
+
+                        const SizedBox(height: 16),
                         TextButton(
                           onPressed: () {
                             context.push('/register');

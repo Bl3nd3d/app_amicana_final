@@ -33,5 +33,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(error: e.toString().replaceFirst('Exception: ', '')));
       }
     });
+
+    on<GoogleSignInButtonPressed>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        final user = await _authService.signInWithGoogle();
+        emit(AuthSuccess(user: user));
+      } catch (e) {
+        emit(AuthFailure(error: e.toString().replaceFirst('Exception: ', '')));
+      }
+    });
   }
 }
