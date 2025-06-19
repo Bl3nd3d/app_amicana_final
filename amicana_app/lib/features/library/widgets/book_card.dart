@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// --- RUTA DE IMPORTACIÓN CORREGIDA Y ESTANDARIZADA ---
 import 'package:amicana_app/features/library/models/book_model.dart';
 
 class BookCard extends StatelessWidget {
@@ -11,12 +10,16 @@ class BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Pasamos el objeto 'book' completo a la siguiente pantalla.
-        context.go('/library/book/${book.id}', extra: book);
+        // --- CAMBIO CLAVE: Usamos PUSH y solo navegamos con el ID ---
+        // La pantalla de detalle ahora buscará el libro usando su ID.
+        context.push('/library/book/${book.id}');
       },
       child: Card(
         elevation: 3,
         clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,7 +35,9 @@ class BookCard extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   },
                   errorBuilder: (context, error, stackTrace) {
-                    return const Icon(Icons.book, size: 50, color: Colors.grey);
+                    return const Center(
+                      child: Icon(Icons.book, size: 50, color: Colors.grey),
+                    );
                   },
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/library/bloc/library_bloc.dart';
 import 'package:amicana_app/features/library/widgets/book_card.dart';
 
@@ -17,6 +18,11 @@ class BookListScreen extends StatelessWidget {
           title: const Text('Biblioteca Digital'),
           backgroundColor: Colors.transparent,
           elevation: 0,
+          // --- BOTÓN PARA VOLVER A HOME AÑADIDO ---
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go('/library'),
+          ),
         ),
         body: Stack(
           children: [
