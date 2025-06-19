@@ -10,7 +10,8 @@ class BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // --- NAVEGACIÓN CORREGIDA A LA NUEVA RUTA ---
+        // --- CORRECCIÓN CLAVE: Usamos PUSH para "apilar" la pantalla de detalle ---
+        // Esto permite que `context.pop()` en la siguiente pantalla funcione para volver.
         context.push('/books/${book.id}');
       },
       child: Card(

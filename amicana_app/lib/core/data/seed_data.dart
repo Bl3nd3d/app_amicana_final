@@ -14,8 +14,9 @@ final List<Map<String, dynamic>> seedBooksData = [
         'title': 'Capítulo 1: El Descubrimiento del Hielo',
         'synopsis': 'Una descripción detallada del primer capítulo...',
         'pageCount': 20,
-        'pdfUrl': 'https://url-de-tu-pdf-en-supabase.com/cap1.pdf',
-        'audioUrl': 'https://url-de-tu-audio-en-supabase.com/cap1.mp3'
+        'pdfUrl':
+            'https://vyqsylsofvukthfdantr.supabase.co/storage/v1/object/public/archivos-amicana/pdf_caps/chapter%201%20-.pdf',
+        'audioUrl': 'https://open.spotify.com/track/1XwRyFRn2qU6phLtOQ53MI'
       },
       {
         'id': 'cas-capitulo-2',
@@ -23,8 +24,10 @@ final List<Map<String, dynamic>> seedBooksData = [
         'synopsis':
             'José Arcadio Buendía se obsesiona con descifrar los pergaminos...',
         'pageCount': 25,
-        'pdfUrl': 'https://url-de-tu-pdf-en-supabase.com/cap2.pdf',
-        'audioUrl': '' // Dejar vacío si no hay
+        'pdfUrl':
+            'https://vyqsylsofvukthfdantr.supabase.co/storage/v1/object/public/archivos-amicana/pdf_caps/CHAPTER%202.pdf',
+        'audioUrl':
+            'https://open.spotify.com/track/2k5qBSP7L76HxUFefb75q6' // Dejar vacío si no hay
       }
     ]
   }, // <-- Coma que separa los libros
