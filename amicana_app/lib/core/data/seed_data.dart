@@ -34,8 +34,7 @@ final List<Map<String, dynamic>> seedBooksData = [
     'id': 'the-scarlet-letter',
     'title': 'The Scarlet Letter',
     'author': 'Nathaniel Hawthorne',
-    'coverUrl':
-        'https://images.fravega.com/f300/e2f470559ae5357c21f92e1f57d605c3.jpg',
+    'coverUrl': '',
     'description':
         'Una historia de Hester Prynne, quien concibe una hija a través de un romance y lucha por crear una nueva vida de arrepentimiento y dignidad.',
     'chapters': [

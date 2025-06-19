@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:amicana_app/core/data/seed_data.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
-import 'package:amicana_app/core/data/seed_data.dart';
 
 class LibraryService {
   final _db = FirebaseFirestore.instance;
 
+  /// Obtiene todos los libros y sus capítulos desde Firestore.
   Future<List<Book>> getBooks() async {
     try {
       final snapshot = await _db.collection('books').get();
@@ -43,6 +44,7 @@ class LibraryService {
     }
   }
 
+  /// Obtiene los datos de un solo libro por su ID.
   Future<Book> getBookById(String bookId) async {
     try {
       final doc = await _db.collection('books').doc(bookId).get();
@@ -77,6 +79,8 @@ class LibraryService {
     }
   }
 
+  /// Borra la colección 'books' existente y la vuelve a poblar con los datos
+  /// del archivo local 'seed_data.dart'.
   Future<void> seedDatabase() async {
     print('Iniciando proceso de sembrado de la base de datos...');
 

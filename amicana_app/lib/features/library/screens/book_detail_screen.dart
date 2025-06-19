@@ -35,11 +35,9 @@ class BookDetailScreen extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     pinned: true,
-                    // --- BOTÓN DE VOLVER CON POP ---
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => context
-                          .pop(), // Pop para volver a la pantalla anterior
+                      onPressed: () => context.pop(),
                     ),
                     flexibleSpace: FlexibleSpaceBar(
                       background: Hero(
@@ -115,9 +113,12 @@ class BookDetailScreen extends StatelessWidget {
                           ),
                           title: Text(chapter.title,
                               style: const TextStyle(color: Colors.white)),
+                          // --- NAVEGACIÓN CORREGIDA ---
                           onTap: () {
-                            context.go(
-                              '/library/book/${state.book.id}/chapter/${chapter.id}',
+                            // Usamos PUSH y la ruta relativa del capítulo.
+                            // GoRouter la añadirá a la ruta actual.
+                            context.push(
+                              'chapter/${chapter.id}',
                               extra: {'book': state.book, 'chapter': chapter},
                             );
                           },
