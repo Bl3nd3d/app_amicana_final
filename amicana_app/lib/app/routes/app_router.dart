@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
-
-// Modelos
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
-
-// Pantallas
 import 'package:amicana_app/features/auth/screens/login_screen.dart';
 import 'package:amicana_app/features/auth/screens/register_screen.dart';
 import 'package:amicana_app/features/auth/screens/role_selection_screen.dart';
@@ -53,16 +49,21 @@ class AppRouter {
           path: '/library',
           name: 'library',
           builder: (context, state) => const LibraryHomeScreen()),
+
+      // --- ESTRUCTURA DE RUTAS DE LIBROS CORREGIDA Y ANIDADA ---
       GoRoute(
           path: '/books',
           name: 'books',
           builder: (context, state) => const BookListScreen(),
           routes: [
             GoRoute(
-                path: ':bookId',
+                path:
+                    ':bookId', // La ruta ahora es relativa a /books (ej: /books/un-id)
                 name: 'bookDetail',
-                builder: (context, state) =>
-                    BookDetailScreen(bookId: state.pathParameters['bookId']!),
+                builder: (context, state) {
+                  final bookId = state.pathParameters['bookId']!;
+                  return BookDetailScreen(bookId: bookId);
+                },
                 routes: [
                   GoRoute(
                     path: 'chapter/:chapterId',
@@ -75,8 +76,9 @@ class AppRouter {
                       );
                     },
                   )
-                ]),
+                ])
           ]),
+
       GoRoute(
           path: '/quizzes',
           name: 'quizzes',
