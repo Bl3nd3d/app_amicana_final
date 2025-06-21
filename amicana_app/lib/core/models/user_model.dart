@@ -1,4 +1,3 @@
-// Este es el hogar definitivo y central para el modelo User.
 class User {
   final String id;
   final String name;

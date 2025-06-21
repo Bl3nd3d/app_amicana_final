@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-// El BLoC importa los modelos para que sus 'partes' (state y event) puedan usarlos
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/features/library/models/reading_progress_model.dart';
 import 'package:amicana_app/features/library/services/library_service.dart';
@@ -16,11 +15,10 @@ class BookDetailBloc extends Bloc<BookDetailEvent, BookDetailState> {
       emit(BookDetailLoading());
       try {
         final book = await _libraryService.getBookById(event.bookId);
-        // Simulación del progreso (en un futuro esto también vendría de un servicio)
         final progress = ReadingProgress(
-          userId: 'current_user_id',
+          userId: 'current_user_id', // Simulado
           bookId: book.id,
-          completedChapterIds: {}, // Empezamos con ningún capítulo completado
+          completedChapterIds: {},
         );
         emit(BookDetailLoaded(book: book, progress: progress));
       } catch (e) {
@@ -34,19 +32,16 @@ class BookDetailBloc extends Bloc<BookDetailEvent, BookDetailState> {
         final currentProgress = currentState.progress;
         final newCompletedChapterIds =
             Set<String>.from(currentProgress.completedChapterIds);
-
         if (newCompletedChapterIds.contains(event.chapterId)) {
           newCompletedChapterIds.remove(event.chapterId);
         } else {
           newCompletedChapterIds.add(event.chapterId);
         }
-
         final newProgress = ReadingProgress(
           userId: currentProgress.userId,
           bookId: currentProgress.bookId,
           completedChapterIds: newCompletedChapterIds,
         );
-
         emit(currentState.copyWith(progress: newProgress));
       }
     });

@@ -64,6 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '9356784355',
     projectId: 'amicana-8a036',
     storageBucket: 'amicana-8a036.firebasestorage.app',
+    androidClientId: '9356784355-44fjkqj6lbh1lt6bvoljauvsmbnoei1o.apps.googleusercontent.com',
+    iosClientId: '9356784355-jk8cl6rrbp2reg0ps2isel35hlls9aja.apps.googleusercontent.com',
     iosBundleId: 'com.example.amicanaApp',
   );
 
@@ -73,6 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '9356784355',
     projectId: 'amicana-8a036',
     storageBucket: 'amicana-8a036.firebasestorage.app',
+    androidClientId: '9356784355-44fjkqj6lbh1lt6bvoljauvsmbnoei1o.apps.googleusercontent.com',
+    iosClientId: '9356784355-jk8cl6rrbp2reg0ps2isel35hlls9aja.apps.googleusercontent.com',
     iosBundleId: 'com.example.amicanaApp',
   );
 
@@ -85,4 +89,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'amicana-8a036.firebasestorage.app',
     measurementId: 'G-BZ7JC56PWE',
   );
+
 }
