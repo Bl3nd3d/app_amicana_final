@@ -10,13 +10,15 @@ class BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // --- CORRECCIÓN CLAVE: Usamos PUSH para "apilar" la pantalla de detalle ---
-        // Esto permite que `context.pop()` en la siguiente pantalla funcione para volver.
+        // --- ESTA ES LA NAVEGACIÓN CORREGIDA Y ROBUSTA ---
+        // Usamos PUSH y la nueva ruta anidada que definimos en el router.
+        // La pantalla de detalle recibirá el ID y buscará los datos por su cuenta.
         context.push('/books/${book.id}');
       },
       child: Card(
-        elevation: 3,
-        clipBehavior: Clip.antiAlias,
+        elevation: 4,
+        clipBehavior: Clip
+            .antiAlias, // Asegura que la imagen no se salga de los bordes redondeados
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -25,15 +27,17 @@ class BookCard extends StatelessWidget {
           children: [
             Expanded(
               child: Hero(
-                tag: 'book-cover-${book.id}',
+                tag: 'book-cover-${book.id}', // Tag para la animación
                 child: Image.network(
                   book.coverUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  // Muestra un indicador de carga mientras la imagen se descarga
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return const Center(child: CircularProgressIndicator());
                   },
+                  // Muestra un icono de error si la imagen no se puede cargar
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
                       child: Icon(Icons.book, size: 50, color: Colors.grey),

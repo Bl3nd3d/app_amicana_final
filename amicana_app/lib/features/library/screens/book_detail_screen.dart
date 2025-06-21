@@ -35,11 +35,9 @@ class BookDetailScreen extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     pinned: true,
-                    // --- CORRECCIÓN CLAVE: Botón de volver con POP ---
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => context
-                          .pop(), // Pop para volver a la pantalla anterior
+                      onPressed: () => context.pop(),
                     ),
                     flexibleSpace: FlexibleSpaceBar(
                       background: Hero(

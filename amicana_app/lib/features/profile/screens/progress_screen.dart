@@ -33,7 +33,7 @@ class _ProgressScreenState extends State<ProgressScreen>
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go('/library'),
         ),
         title: const Text('Progress',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -57,7 +57,7 @@ class _ProgressScreenState extends State<ProgressScreen>
               const SizedBox(height: 24),
               _buildPodium(),
               const SizedBox(height: 24),
-              _buildRankedList(),
+              _buildTabContent(),
               const SizedBox(height: 20),
             ],
           ),
@@ -66,6 +66,7 @@ class _ProgressScreenState extends State<ProgressScreen>
     );
   }
 
+  // --- MÉTODO QUE FALTABA O ESTABA MAL UBICADO ---
   Widget _buildTabs() {
     return Center(
       child: Container(
@@ -88,6 +89,21 @@ class _ProgressScreenState extends State<ProgressScreen>
             Tab(text: 'Weekly'),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTabContent() {
+    return SizedBox(
+      height: 350,
+      child: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildRankedList(),
+          const Center(
+              child: Text('Weekly progress is not available yet.',
+                  style: TextStyle(color: Colors.white70))),
+        ],
       ),
     );
   }
@@ -136,6 +152,7 @@ class _ProgressScreenState extends State<ProgressScreen>
       children: const [
         _RankedListItem(
             rank: 4, icon: Icons.image_outlined, title: 'Copywriting'),
+        _RankedListItem(rank: 5, icon: Icons.yard_outlined, title: 'Questions'),
         _RankedListItem(
             rank: 5, icon: Icons.groups_outlined, title: 'Community Post'),
         _RankedListItem(
@@ -143,7 +160,9 @@ class _ProgressScreenState extends State<ProgressScreen>
       ],
     );
   }
-}
+} // <-- FIN DE LA CLASE _ProgressScreenState
+
+// --- WIDGETS DE AYUDA (FUERA DE LA CLASE ANTERIOR) ---
 
 class _CircularStat extends StatelessWidget {
   final IconData icon;

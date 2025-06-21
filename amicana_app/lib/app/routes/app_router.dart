@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
+
+// Modelos
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
-import 'package:amicana_app/core/models/chapter_model.dart';
+import 'package:amicana_app/core/models/chapter_model.dart'; // <-- Ruta estandarizada
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
+
+// Pantallas
 import 'package:amicana_app/features/auth/screens/login_screen.dart';
 import 'package:amicana_app/features/auth/screens/register_screen.dart';
 import 'package:amicana_app/features/auth/screens/role_selection_screen.dart';
@@ -27,6 +31,7 @@ class AppRouter {
       final bool loggedIn = firebase.FirebaseAuth.instance.currentUser != null;
       final bool isPublicRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
+
       if (!loggedIn && !isPublicRoute) return '/login';
       if (loggedIn && isPublicRoute) return '/library';
       return null;
@@ -49,36 +54,34 @@ class AppRouter {
           path: '/library',
           name: 'library',
           builder: (context, state) => const LibraryHomeScreen()),
-
-      // --- ESTRUCTURA DE RUTAS DE LIBROS CORREGIDA Y ANIDADA ---
       GoRoute(
-          path: '/books',
-          name: 'books',
-          builder: (context, state) => const BookListScreen(),
-          routes: [
-            GoRoute(
-                path:
-                    ':bookId', // La ruta ahora es relativa a /books (ej: /books/un-id)
-                name: 'bookDetail',
+        path: '/books',
+        name: 'books',
+        builder: (context, state) => const BookListScreen(),
+        routes: [
+          GoRoute(
+            path: ':bookId',
+            name: 'bookDetail',
+            builder: (context, state) {
+              final bookId = state.pathParameters['bookId']!;
+              return BookDetailScreen(bookId: bookId);
+            },
+            routes: [
+              GoRoute(
+                path: 'chapter/:chapterId',
+                name: 'chapterDetail',
                 builder: (context, state) {
-                  final bookId = state.pathParameters['bookId']!;
-                  return BookDetailScreen(bookId: bookId);
+                  final extraData = state.extra as Map<String, dynamic>;
+                  return ChapterDetailScreen(
+                    book: extraData['book'] as Book,
+                    chapter: extraData['chapter'] as Chapter,
+                  );
                 },
-                routes: [
-                  GoRoute(
-                    path: 'chapter/:chapterId',
-                    name: 'chapterDetail',
-                    builder: (context, state) {
-                      final extraData = state.extra as Map<String, dynamic>;
-                      return ChapterDetailScreen(
-                        book: extraData['book'] as Book,
-                        chapter: extraData['chapter'] as Chapter,
-                      );
-                    },
-                  )
-                ])
-          ]),
-
+              )
+            ],
+          ),
+        ],
+      ),
       GoRoute(
           path: '/quizzes',
           name: 'quizzes',
