@@ -14,7 +14,7 @@ class ChapterDetailScreen extends StatelessWidget {
     required this.chapter,
   });
 
-  // Función para abrir enlaces externos
+  // Función para abrir enlaces externos de forma segura
   Future<void> _launchURL(BuildContext context, String? urlString) async {
     if (urlString == null || urlString.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,8 +54,8 @@ class ChapterDetailScreen extends StatelessWidget {
           Positioned.fill(
             child: Opacity(
               opacity: 0.3,
-              child: Image.asset('assets/images/fondo_app.webp',
-                  fit: BoxFit.cover),
+              child:
+                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
             ),
           ),
           Padding(
@@ -107,7 +107,7 @@ class ChapterDetailScreen extends StatelessWidget {
   }
 }
 
-// Widget de ayuda para los botones de contenido
+// --- WIDGET CORREGIDO ---
 class _ContentButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -124,8 +124,10 @@ class _ContentButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        backgroundColor:
-            onTap != null ? Theme.of(context).primaryColor : Colors.grey[800],
+        // Lógica de color corregida
+        backgroundColor: onTap != null
+            ? Theme.of(context).colorScheme.primary
+            : Colors.grey[800],
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
