@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-// Las importaciones de 'book_model' y 'chapter_model' se han eliminado porque no son necesarias aquí.
 import 'package:amicana_app/features/library/bloc/book_detail/book_detail_bloc.dart';
 
 class BookDetailScreen extends StatelessWidget {
@@ -44,7 +43,6 @@ class BookDetailScreen extends StatelessWidget {
                         child: Image.network(
                           book.coverUrl,
                           fit: BoxFit.cover,
-                          // --- USO DE COLOR CORREGIDO ---
                           color: const Color.fromRGBO(0, 0, 0, 0.4),
                           colorBlendMode: BlendMode.darken,
                         ),

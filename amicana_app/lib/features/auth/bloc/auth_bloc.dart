@@ -10,7 +10,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService _authService = AuthService(); // <-- Instancia del servicio
 
   AuthBloc() : super(AuthInitial()) {
-    // --- MANEJADOR DE LOGIN (ACTUALIZADO) ---
     on<LoginButtonPressed>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -22,7 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    // --- MANEJADOR DE REGISTRO (NUEVO) ---
+    // --- MANEJADOR DE REGISTRO  ---
     on<RegisterButtonPressed>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -47,10 +46,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutButtonPressed>((event, emit) async {
       try {
         await _authService.logout();
-        // Emitimos el estado inicial para indicar que ya no hay un usuario logueado.
+
         emit(AuthInitial());
       } catch (e) {
-        // Opcional: manejar cualquier error que pudiera ocurrir al desloguear
         print('Error al cerrar sesión: $e');
       }
     });

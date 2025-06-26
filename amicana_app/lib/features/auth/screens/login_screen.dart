@@ -10,10 +10,8 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ya no necesitamos el BlocProvider aquí.
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
-        // El listener ahora escucha el BLoC que viene de arriba
         listener: (context, state) async {
           if (state is AuthSuccess) {
             final user = state.user;

@@ -1,5 +1,5 @@
 import 'package:amicana_app/core/services/auth_service.dart';
-import 'package:flutter/material.dart'; // <-- ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ PRESENTE
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:amicana_app/core/models/user_model.dart';
 
@@ -16,7 +16,6 @@ class RoleSelectionScreen extends StatelessWidget {
 
     // Navegamos a la pantalla principal de la biblioteca
     if (context.mounted) {
-      // Buena práctica: verificar que el widget sigue en pantalla
       context.go('/library');
     }
   }
@@ -33,7 +32,6 @@ class RoleSelectionScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Esta línea ahora debería funcionar sin problemas.
               const Icon(Icons.person, size: 60),
               const SizedBox(height: 16),
               Text(

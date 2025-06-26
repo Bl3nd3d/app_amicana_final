@@ -14,11 +14,11 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     on<FetchBooks>((event, emit) async {
       emit(LibraryLoading());
       try {
-        // 3. ¡Ya no usamos mockBooks! Llamamos al servicio para obtener los libros reales.
+        // Llamamos al servicio para obtener los libros reales.
         final books = await _libraryService.getBooks();
         emit(LibraryLoaded(books: books));
       } catch (e) {
-        // Si el servicio falla (ej. sin internet), emitimos un estado de error.
+        // Si el servicio falla estado de error.
         emit(LibraryError(message: e.toString()));
       }
     });

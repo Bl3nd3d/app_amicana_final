@@ -1,7 +1,7 @@
 part of 'auth_bloc.dart';
 
 // Importaciones necesarias para este archivo de estado.
-// El resto del código no cambia y ahora debería funcionar sin errores.
+
 @immutable
 abstract class AuthState {}
 
