@@ -129,8 +129,7 @@ class LibraryHomeScreen extends StatelessWidget {
             title: 'Books',
             color: Colors.blue[200]!,
             icon: Icons.book,
-            onTap: () =>
-                context.go('/books')), // Corregido para ir a la lista de libros
+            onTap: () => context.go('/books')),
         _TopicButton(
             title: 'Grammar',
             color: Colors.green[200]!,
@@ -186,13 +185,13 @@ class LibraryHomeScreen extends StatelessWidget {
       currentIndex: 0,
       onTap: (index) {
         switch (index) {
-          case 0: // Home
+          case 0:
             context.go('/library');
             break;
-          case 2: // Library (Podría ser la pantalla de lista de libros)
+          case 2:
             context.go('/books');
             break;
-          case 4: // Profile
+          case 4:
             context.go('/profile');
             break;
         }

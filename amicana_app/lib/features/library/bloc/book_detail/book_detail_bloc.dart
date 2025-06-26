@@ -16,10 +16,9 @@ class BookDetailBloc extends Bloc<BookDetailEvent, BookDetailState> {
       try {
         final book = await _libraryService.getBookById(event.bookId);
         final progress = ReadingProgress(
-          userId: 'current_user_id', // Simulado
-          bookId: book.id,
-          completedChapterIds: {},
-        );
+            userId: 'current_user_id',
+            bookId: book.id,
+            completedChapterIds: {});
         emit(BookDetailLoaded(book: book, progress: progress));
       } catch (e) {
         emit(BookDetailError(message: e.toString()));

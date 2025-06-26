@@ -10,8 +10,7 @@ class BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // --- NAVEGACIÓN CORREGIDA Y ROBUSTA ---
-        // Ahora usamos la ruta anidada y solo pasamos el ID en la URL
+        // Usa PUSH para apilar la pantalla de detalle
         context.push('/books/${book.id}');
       },
       child: Card(

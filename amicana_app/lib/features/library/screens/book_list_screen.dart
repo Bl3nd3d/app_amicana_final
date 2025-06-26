@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart'; // <-- IMPORTACIÓN AÑADIDA Y CORREGIDA
 import 'package:amicana_app/features/library/bloc/library_bloc.dart';
 import 'package:amicana_app/features/library/widgets/book_card.dart';
 
@@ -9,7 +9,6 @@ class BookListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos el BlocProvider para tener acceso al LibraryBloc
     return BlocProvider(
       create: (context) => LibraryBloc()..add(FetchBooks()),
       child: Scaffold(
@@ -18,9 +17,9 @@ class BookListScreen extends StatelessWidget {
           title: const Text('Biblioteca Digital'),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          // --- BOTÓN PARA VOLVER A HOME AÑADIDO ---
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
+            // Esta función ahora funcionará porque GoRouter está importado
             onPressed: () => context.go('/library'),
           ),
         ),
@@ -33,14 +32,12 @@ class BookListScreen extends StatelessWidget {
                     fit: BoxFit.cover),
               ),
             ),
-            // El BlocBuilder reacciona a los estados del LibraryBloc
             BlocBuilder<LibraryBloc, LibraryState>(
               builder: (context, state) {
                 if (state is LibraryLoading || state is LibraryInitial) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is LibraryLoaded) {
-                  // Si los libros se cargaron, muestra la cuadrícula
                   return GridView.builder(
                     padding: const EdgeInsets.all(16.0),
                     gridDelegate:
@@ -53,7 +50,6 @@ class BookListScreen extends StatelessWidget {
                     itemCount: state.books.length,
                     itemBuilder: (context, index) {
                       final book = state.books[index];
-                      // Reutilizamos el BookCard que ya teníamos
                       return BookCard(book: book);
                     },
                   );

@@ -86,8 +86,8 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
           Positioned.fill(
             child: Opacity(
               opacity: 0.3,
-              child:
-                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo_app.webp',
+                  fit: BoxFit.cover),
             ),
           ),
           Padding(

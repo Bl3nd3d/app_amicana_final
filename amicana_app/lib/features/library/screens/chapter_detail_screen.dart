@@ -14,15 +14,18 @@ class ChapterDetailScreen extends StatelessWidget {
     required this.chapter,
   });
 
-  // Función para abrir enlaces externos de forma segura
+  // Función de ayuda para abrir enlaces externos de forma segura
   Future<void> _launchURL(BuildContext context, String? urlString) async {
+    // 1. Verifica si la URL es válida
     if (urlString == null || urlString.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No hay un archivo disponible.')),
+        const SnackBar(
+            content: Text('No hay un archivo disponible para este capítulo.')),
       );
       return;
     }
 
+    // 2. Intenta convertir el texto a una URI y lanzarla
     try {
       final Uri url = Uri.parse(urlString);
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -45,8 +48,9 @@ class ChapterDetailScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () =>
+              context.pop(), // Vuelve a la pantalla de detalle del libro
         ),
       ),
       body: Stack(
@@ -54,8 +58,8 @@ class ChapterDetailScreen extends StatelessWidget {
           Positioned.fill(
             child: Opacity(
               opacity: 0.3,
-              child:
-                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo_app.webp',
+                  fit: BoxFit.cover),
             ),
           ),
           Padding(
@@ -72,6 +76,8 @@ class ChapterDetailScreen extends StatelessWidget {
                         .titleLarge
                         ?.copyWith(color: Colors.white70)),
                 const Divider(height: 32, color: Colors.white24),
+
+                // Botones para el contenido
                 _ContentButton(
                   icon: Icons.headset,
                   label: 'Escuchar Audio',
@@ -84,6 +90,8 @@ class ChapterDetailScreen extends StatelessWidget {
                   onTap: () => _launchURL(context, chapter.pdfUrl),
                 ),
                 const Divider(height: 32, color: Colors.white24),
+
+                // Sinopsis
                 Text('Sinopsis del Capítulo',
                     style: Theme.of(context)
                         .textTheme
@@ -107,7 +115,7 @@ class ChapterDetailScreen extends StatelessWidget {
   }
 }
 
-// --- WIDGET CORREGIDO ---
+// Widget de ayuda reutilizable para los botones de la pantalla
 class _ContentButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -124,10 +132,7 @@ class _ContentButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        // Lógica de color corregida
-        backgroundColor: onTap != null
-            ? Theme.of(context).colorScheme.primary
-            : Colors.grey[800],
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

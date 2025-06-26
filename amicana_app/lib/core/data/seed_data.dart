@@ -1,5 +1,6 @@
 // Estructura de datos para un libro con sus capítulos
 final List<Map<String, dynamic>> seedBooksData = [
+  // --- Libro 1: The Scarlet Letter ---
   {
     'id': 'the-scarlet-letter',
     'title': 'The Scarlet Letter',
@@ -11,7 +12,7 @@ final List<Map<String, dynamic>> seedBooksData = [
       {
         'id': 'tsl-capitulo-1',
         'title': 'Chapter 1: The Prison-Door',
-        'pageCount': 25,
+        'pageCount': 5,
         'synopsis': '''
 A crowd of men and women assembles near a dilapidated wooden prison. The narrator remarks that the founders of every new settlement have always sought first to build a prison and a graveyard. He adds that this particular prison was most likely built upon the founding of Boston and describes prisons as the "black flower of civilized society."
 Next to the prison door stands a blooming wild rose bush. The narrator imagines that perhaps the rose bush grows in such an unlikely place to offer comfort to prisoners entering the jail and forgiveness from Nature to those leaving it to die on the scaffold.
@@ -37,5 +38,12 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
         'audioUrl': 'https://open.spotify.com/track/2k5qBSP7L76HxUFefb75q6'
       }
     ]
-  }
+  }, // <-- Coma que separa un libro de otro
+
+  // --- Libro 2 (Puedes añadir más libros aquí) ---
+  // {
+  //   'id': 'otro-libro-id',
+  //   'title': 'Otro Libro',
+  //   ... (y así sucesivamente)
+  // }
 ];

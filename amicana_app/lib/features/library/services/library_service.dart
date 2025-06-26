@@ -9,7 +9,7 @@ class LibraryService {
   /// Obtiene todos los libros y sus capítulos desde Firestore.
   Future<List<Book>> getBooks() async {
     try {
-      final snapshot = await _db.collection('books').get();
+      final snapshot = await _db.collection('books').orderBy('title').get();
 
       final books = await Future.wait(snapshot.docs.map((doc) async {
         final chaptersSnapshot =
