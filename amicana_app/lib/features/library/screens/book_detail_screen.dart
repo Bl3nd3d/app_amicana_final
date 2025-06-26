@@ -113,9 +113,13 @@ class BookDetailScreen extends StatelessWidget {
                           ),
                           title: Text(chapter.title,
                               style: const TextStyle(color: Colors.white)),
+                          // --- ESTA ES LA LÓGICA DE NAVEGACIÓN CLAVE ---
                           onTap: () {
+                            // Usamos PUSH para apilar la nueva pantalla
                             context.push(
+                              // Ruta RELATIVA (sin '/') para que se añada a la URL actual
                               'chapter/${chapter.id}',
+                              // Pasamos los datos necesarios a la nueva pantalla
                               extra: {'book': state.book, 'chapter': chapter},
                             );
                           },

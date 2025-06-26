@@ -48,23 +48,21 @@ class AppRouter {
           path: '/library',
           name: 'library',
           builder: (context, state) => const LibraryHomeScreen()),
-
-      // --- ESTRUCTURA DE RUTAS DE LIBROS ANIDADA Y CORREGIDA ---
       GoRoute(
           path: '/books',
           name: 'books',
           builder: (context, state) => const BookListScreen(),
           routes: [
             GoRoute(
-                path: ':bookId', // Ruta anidada para el detalle
+                path: ':bookId', // ej: /books/id-del-libro
                 name: 'bookDetail',
-                builder: (context, state) {
-                  final bookId = state.pathParameters['bookId']!;
-                  return BookDetailScreen(bookId: bookId);
-                },
+                builder: (context, state) =>
+                    BookDetailScreen(bookId: state.pathParameters['bookId']!),
                 routes: [
+                  // --- ESTA ES LA RUTA ANIDADA CLAVE ---
                   GoRoute(
-                    path: 'chapter/:chapterId', // Ruta anidada para el capítulo
+                    path:
+                        'chapter/:chapterId', // ej: /books/id-del-libro/chapter/id-del-capitulo
                     name: 'chapterDetail',
                     builder: (context, state) {
                       final extraData = state.extra as Map<String, dynamic>;
@@ -74,9 +72,8 @@ class AppRouter {
                       );
                     },
                   )
-                ])
+                ]),
           ]),
-
       GoRoute(
           path: '/quizzes',
           name: 'quizzes',
