@@ -16,45 +16,31 @@ dependencies:
 
   # Manejo de Estado
   flutter_bloc: ^8.1.5
-  provider: ^6.1.2 # (Puedes eliminar este o flutter_bloc si solo usarás uno)
+  bloc: ^8.1.4
+  meta: ^1.12.0
 
-  # Red y Peticiones HTTP
-  http: ^1.2.1
-  dio: ^5.4.3
-
-  # Navegación
+  # Conectividad y Navegación
   go_router: ^14.1.0
+  url_launcher: ^6.2.6
+  dio: ^5.4.3 # <-- DEPENDENCIA AÑADIDA DE NUEVO
 
   # Almacenamiento Local
   shared_preferences: ^2.2.3
 
-  # Firebase (versiones actualizadas a junio de 2025)
+  # Firebase
   firebase_core: ^2.31.0
   firebase_auth: ^4.19.4
   cloud_firestore: ^4.17.2
-  firebase_storage: ^11.7.4
-  google_sign_in: ^6.3.0
-  url_launcher: ^6.3.1
-
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   
   flutter_lints: ^3.0.0
-  flutterfire_cli: ^1.2.0 # <-- CORREGIDO: Se añadió el ^
 
-
-# --- SECCIÓN ÚNICA Y CORRECTA DE FLUTTER ---
 flutter:
   uses-material-design: true
 
-  # Declaración de la carpeta de imágenes
   assets:
-  - assets/images/
-
-  # Para agregar fuentes personalizadas (ejemplo)
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+    - assets/images/

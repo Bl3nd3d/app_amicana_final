@@ -42,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Positioned.fill(
               child: Opacity(
                 opacity: 0.3,
-                child: Image.asset('assets/images/fondo_app.png',
+                child: Image.asset('assets/images/fondo_app.webp',
                     fit: BoxFit.cover),
               ),
             ),

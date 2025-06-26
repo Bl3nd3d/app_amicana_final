@@ -54,22 +54,19 @@ class AppRouter {
           builder: (context, state) => const BookListScreen(),
           routes: [
             GoRoute(
-                path: ':bookId', // ej: /books/id-del-libro
+                path: ':bookId',
                 name: 'bookDetail',
                 builder: (context, state) =>
                     BookDetailScreen(bookId: state.pathParameters['bookId']!),
                 routes: [
-                  // --- ESTA ES LA RUTA ANIDADA CLAVE ---
                   GoRoute(
-                    path:
-                        'chapter/:chapterId', // ej: /books/id-del-libro/chapter/id-del-capitulo
+                    path: 'chapter/:chapterId',
                     name: 'chapterDetail',
                     builder: (context, state) {
                       final extraData = state.extra as Map<String, dynamic>;
                       return ChapterDetailScreen(
-                        book: extraData['book'] as Book,
-                        chapter: extraData['chapter'] as Chapter,
-                      );
+                          book: extraData['book'] as Book,
+                          chapter: extraData['chapter'] as Chapter);
                     },
                   )
                 ]),

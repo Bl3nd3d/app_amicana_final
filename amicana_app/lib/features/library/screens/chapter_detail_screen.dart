@@ -4,7 +4,8 @@ import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ChapterDetailScreen extends StatelessWidget {
+// --- CAMBIO: Convertido a StatefulWidget para manejar el 'context' de forma segura ---
+class ChapterDetailScreen extends StatefulWidget {
   final Book book;
   final Chapter chapter;
 
@@ -14,25 +15,32 @@ class ChapterDetailScreen extends StatelessWidget {
     required this.chapter,
   });
 
-  // Función de ayuda para abrir enlaces externos de forma segura
-  Future<void> _launchURL(BuildContext context, String? urlString) async {
-    // 1. Verifica si la URL es válida
+  @override
+  State<ChapterDetailScreen> createState() => _ChapterDetailScreenState();
+}
+
+class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
+  // Función para abrir enlaces externos de forma segura
+  Future<void> _launchURL(String? urlString) async {
+    // Verificamos si la URL es nula o está vacía
     if (urlString == null || urlString.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('No hay un archivo disponible para este capítulo.')),
+        const SnackBar(content: Text('No hay un archivo disponible.')),
       );
       return;
     }
 
-    // 2. Intenta convertir el texto a una URI y lanzarla
     try {
       final Uri url = Uri.parse(urlString);
+      // CORRECCIÓN: Se verifica si el widget sigue montado después del 'await'
+      if (!mounted) return;
+
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
         throw Exception('No se pudo lanzar la URL');
       }
     } catch (e) {
-      print('Error al lanzar URL: $e');
+      // CORRECCIÓN: Se verifica de nuevo antes de mostrar el SnackBar
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('No se pudo abrir el enlace: $urlString')),
       );
@@ -44,13 +52,12 @@ class ChapterDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0A183C),
       appBar: AppBar(
-        title: Text(chapter.title),
+        title: Text(widget.chapter.title), // Se accede con 'widget.chapter'
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () =>
-              context.pop(), // Vuelve a la pantalla de detalle del libro
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Stack(
@@ -66,32 +73,28 @@ class ChapterDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ListView(
               children: [
-                Text(book.title,
+                Text(widget.book.title, // Se accede con 'widget.book'
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: Colors.white, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                Text('Capítulo: ${chapter.title}',
+                Text('Capítulo: ${widget.chapter.title}',
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
                         ?.copyWith(color: Colors.white70)),
                 const Divider(height: 32, color: Colors.white24),
-
-                // Botones para el contenido
                 _ContentButton(
                   icon: Icons.headset,
                   label: 'Escuchar Audio',
-                  onTap: () => _launchURL(context, chapter.audioUrl),
+                  onTap: () => _launchURL(widget.chapter.audioUrl),
                 ),
                 const SizedBox(height: 16),
                 _ContentButton(
                   icon: Icons.picture_as_pdf,
                   label: 'Leer PDF',
-                  onTap: () => _launchURL(context, chapter.pdfUrl),
+                  onTap: () => _launchURL(widget.chapter.pdfUrl),
                 ),
                 const Divider(height: 32, color: Colors.white24),
-
-                // Sinopsis
                 Text('Sinopsis del Capítulo',
                     style: Theme.of(context)
                         .textTheme
@@ -99,7 +102,7 @@ class ChapterDetailScreen extends StatelessWidget {
                         ?.copyWith(color: Colors.white)),
                 const SizedBox(height: 8),
                 Text(
-                  chapter.synopsis,
+                  widget.chapter.synopsis,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge
@@ -115,7 +118,7 @@ class ChapterDetailScreen extends StatelessWidget {
   }
 }
 
-// Widget de ayuda reutilizable para los botones de la pantalla
+// Widget de ayuda (sin cambios)
 class _ContentButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -132,7 +135,9 @@ class _ContentButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: onTap != null
+            ? Theme.of(context).colorScheme.primary
+            : Colors.grey[800],
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

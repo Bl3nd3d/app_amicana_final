@@ -44,8 +44,8 @@ class _ProgressScreenState extends State<ProgressScreen>
           Positioned.fill(
             child: Opacity(
               opacity: 0.3,
-              child:
-                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo_app.webp',
+                  fit: BoxFit.cover),
             ),
           ),
           ListView(
@@ -66,14 +66,13 @@ class _ProgressScreenState extends State<ProgressScreen>
     );
   }
 
-  // --- MÉTODO QUE FALTABA O ESTABA MAL UBICADO ---
   Widget _buildTabs() {
     return Center(
       child: Container(
         width: 250,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withAlpha(25),
           borderRadius: BorderRadius.circular(20),
         ),
         child: TabBar(
@@ -152,7 +151,11 @@ class _ProgressScreenState extends State<ProgressScreen>
       children: const [
         _RankedListItem(
             rank: 4, icon: Icons.image_outlined, title: 'Copywriting'),
-        _RankedListItem(rank: 5, icon: Icons.yard_outlined, title: 'Questions'),
+        // --- LÍNEA CORREGIDA ---
+        _RankedListItem(
+            rank: 5,
+            icon: Icons.youtube_searched_for_outlined,
+            title: 'Questions'),
         _RankedListItem(
             rank: 5, icon: Icons.groups_outlined, title: 'Community Post'),
         _RankedListItem(
@@ -160,9 +163,9 @@ class _ProgressScreenState extends State<ProgressScreen>
       ],
     );
   }
-} // <-- FIN DE LA CLASE _ProgressScreenState
+}
 
-// --- WIDGETS DE AYUDA (FUERA DE LA CLASE ANTERIOR) ---
+// --- WIDGETS DE AYUDA ---
 
 class _CircularStat extends StatelessWidget {
   final IconData icon;
@@ -170,8 +173,7 @@ class _CircularStat extends StatelessWidget {
   final double percentage;
   final Color color;
   const _CircularStat(
-      {super.key,
-      required this.icon,
+      {required this.icon,
       required this.label,
       required this.percentage,
       required this.color});
@@ -189,7 +191,7 @@ class _CircularStat extends StatelessWidget {
               CircularProgressIndicator(
                 value: percentage,
                 strokeWidth: 6,
-                backgroundColor: Colors.white.withOpacity(0.2),
+                backgroundColor: Colors.white.withAlpha(50),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               ),
               Center(child: Icon(icon, color: Colors.white, size: 30)),
@@ -212,10 +214,7 @@ class _PodiumStep extends StatelessWidget {
   final double height;
   final Color color;
   const _PodiumStep(
-      {super.key,
-      required this.rank,
-      required this.height,
-      required this.color});
+      {required this.rank, required this.height, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +222,7 @@ class _PodiumStep extends StatelessWidget {
       width: 80,
       height: height,
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withAlpha(25),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(12),
             topRight: Radius.circular(12),
@@ -245,7 +244,7 @@ class _RankedListItem extends StatelessWidget {
   final IconData icon;
   final String title;
   const _RankedListItem(
-      {super.key, required this.rank, required this.icon, required this.title});
+      {required this.rank, required this.icon, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +252,7 @@ class _RankedListItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       margin: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha(25),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -262,7 +261,7 @@ class _RankedListItem extends StatelessWidget {
               style: const TextStyle(color: Colors.white70, fontSize: 16)),
           const SizedBox(width: 16),
           CircleAvatar(
-            backgroundColor: Colors.white.withOpacity(0.1),
+            backgroundColor: Colors.white.withAlpha(25),
             child: Icon(icon, color: Colors.white70, size: 20),
           ),
           const SizedBox(width: 16),

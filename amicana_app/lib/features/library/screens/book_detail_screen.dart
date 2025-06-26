@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:amicana_app/features/library/models/book_model.dart';
-import 'package:amicana_app/core/models/chapter_model.dart';
+// Las importaciones de 'book_model' y 'chapter_model' se han eliminado porque no son necesarias aquí.
 import 'package:amicana_app/features/library/bloc/book_detail/book_detail_bloc.dart';
 
 class BookDetailScreen extends StatelessWidget {
@@ -45,7 +44,8 @@ class BookDetailScreen extends StatelessWidget {
                         child: Image.network(
                           book.coverUrl,
                           fit: BoxFit.cover,
-                          color: Colors.black.withOpacity(0.4),
+                          // --- USO DE COLOR CORREGIDO ---
+                          color: const Color.fromRGBO(0, 0, 0, 0.4),
                           colorBlendMode: BlendMode.darken,
                         ),
                       ),
@@ -78,7 +78,9 @@ class BookDetailScreen extends StatelessWidget {
                                   .textTheme
                                   .bodyLarge
                                   ?.copyWith(
-                                      color: Colors.white.withOpacity(0.9),
+                                      // --- USO DE OPACIDAD CORREGIDO ---
+                                      color: Colors.white
+                                          .withAlpha(230), // ~90% de opacidad
                                       height: 1.5)),
                           const Divider(
                               height: 40, thickness: 1, color: Colors.white24),
@@ -113,13 +115,9 @@ class BookDetailScreen extends StatelessWidget {
                           ),
                           title: Text(chapter.title,
                               style: const TextStyle(color: Colors.white)),
-                          // --- ESTA ES LA LÓGICA DE NAVEGACIÓN CLAVE ---
                           onTap: () {
-                            // Usamos PUSH para apilar la nueva pantalla
                             context.push(
-                              // Ruta RELATIVA (sin '/') para que se añada a la URL actual
                               'chapter/${chapter.id}',
-                              // Pasamos los datos necesarios a la nueva pantalla
                               extra: {'book': state.book, 'chapter': chapter},
                             );
                           },

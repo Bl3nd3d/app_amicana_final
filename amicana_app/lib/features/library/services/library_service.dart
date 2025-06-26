@@ -39,7 +39,7 @@ class LibraryService {
 
       return books;
     } catch (e) {
-      print('Error al obtener los libros: $e');
+      // En lugar de imprimir, simplemente lanzamos la excepción con un mensaje claro.
       throw Exception('No se pudieron cargar los libros desde Firestore.');
     }
   }
@@ -74,7 +74,7 @@ class LibraryService {
           title: data['title'] ?? '',
           chapters: chapters);
     } catch (e) {
-      print('Error al obtener el libro por ID: $e');
+      // En lugar de imprimir, lanzamos la excepción.
       throw Exception('No se pudo cargar el libro.');
     }
   }
@@ -82,8 +82,6 @@ class LibraryService {
   /// Borra la colección 'books' existente y la vuelve a poblar con los datos
   /// del archivo local 'seed_data.dart'.
   Future<void> seedDatabase() async {
-    print('Iniciando proceso de sembrado de la base de datos...');
-
     final bookCollectionRef = _db.collection('books');
     var snapshot = await bookCollectionRef.get();
     for (var doc in snapshot.docs) {
@@ -93,9 +91,7 @@ class LibraryService {
       }
       await doc.reference.delete();
     }
-    print('Datos antiguos eliminados.');
 
-    print('Iniciando carga de nuevos datos...');
     for (final bookData in seedBooksData) {
       final bookDataForFirestore = Map<String, dynamic>.from(bookData);
       final chaptersData =
@@ -115,6 +111,5 @@ class LibraryService {
             .set(chapterDataForFirestore);
       }
     }
-    print('¡Carga de datos de libros completa!');
   }
 }

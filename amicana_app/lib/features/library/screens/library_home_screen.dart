@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:amicana_app/features/library/bloc/library_bloc.dart';
 import 'package:amicana_app/features/library/widgets/book_card.dart';
+// --- IMPORTACIONES AÑADIDAS ---
+import 'package:amicana_app/core/data/seed_data.dart';
+import 'package:amicana_app/features/library/models/book_model.dart';
+import 'package:amicana_app/core/models/chapter_model.dart';
 
 class LibraryHomeScreen extends StatelessWidget {
   const LibraryHomeScreen({super.key});
@@ -20,7 +24,7 @@ class LibraryHomeScreen extends StatelessWidget {
               child: Opacity(
                 opacity: 0.3,
                 child: Image.asset(
-                  'assets/images/fondo_app.png',
+                  'assets/images/fondo_app.webp',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -130,10 +134,46 @@ class LibraryHomeScreen extends StatelessWidget {
             color: Colors.blue[200]!,
             icon: Icons.book,
             onTap: () => context.go('/books')),
+
+        // --- BOTÓN DE GRAMMAR MODIFICADO PARA USAR SEED DATA ---
         _TopicButton(
             title: 'Grammar',
             color: Colors.green[200]!,
-            icon: Icons.spellcheck),
+            icon: Icons.spellcheck,
+            onTap: () {
+              // Obtenemos los datos del primer libro en nuestro archivo de prueba
+              final bookData = seedBooksData.firstWhere(
+                  (book) => book['id'] == 'the-scarlet-letter',
+                  orElse: () =>
+                      seedBooksData.first // Si no lo encuentra, usa el primero
+                  );
+              final chapterData = (bookData['chapters'] as List).first;
+
+              // Creamos los objetos Book y Chapter a partir de los datos
+              final grammarBook = Book(
+                id: bookData['id'],
+                title: bookData['title'],
+                author: bookData['author'],
+                coverUrl: bookData['coverUrl'],
+                description: bookData['description'],
+                chapters: [], // No necesitamos los otros capítulos para la navegación
+              );
+              final grammarChapter = Chapter(
+                id: chapterData['id'],
+                title: chapterData['title'],
+                synopsis: chapterData['synopsis'],
+                pageCount: chapterData['pageCount'],
+                pdfUrl: chapterData['pdfUrl'],
+                audioUrl: chapterData['audioUrl'],
+              );
+
+              // Navegamos a la pantalla de detalle del capítulo
+              context.push(
+                '/books/${grammarBook.id}/chapter/${grammarChapter.id}',
+                extra: {'book': grammarBook, 'chapter': grammarChapter},
+              );
+            }),
+
         _TopicButton(
             title: 'Progress',
             color: Colors.purple[200]!,

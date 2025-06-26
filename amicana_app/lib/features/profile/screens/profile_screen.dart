@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,12 +29,24 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final String userName = 'Tincho';
-    final String userEmail = 'tincho.dev@amicana.com';
-    final String coursesEnrolled = '12';
-    final String averageScore = '50%';
-    final String daysInLearning = '98';
-    final String totalOfRings = '5';
+    final currentUser = FirebaseAuth.instance.currentUser;
+    String userName = 'Guest';
+    String userEmail = 'No Email';
+
+    if (currentUser?.email != null && currentUser!.email!.isNotEmpty) {
+      userName = currentUser.email!.split('@').first;
+      userName = userName.substring(0, 1).toUpperCase() + userName.substring(1);
+      userEmail = currentUser.email!;
+    } else if (currentUser?.displayName != null &&
+        currentUser!.displayName!.isNotEmpty) {
+      userName = currentUser.displayName!;
+    }
+
+    // Datos simulados para las estadísticas
+    const String coursesEnrolled = '12';
+    const String averageScore = '50%';
+    const String daysInLearning = '98';
+    const String totalOfRings = '5';
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A183C),
@@ -50,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () => context.push('/settings'), // <-- USA PUSH
+            onPressed: () => context.push('/settings'),
           ),
         ],
       ),
@@ -59,14 +72,16 @@ class _ProfileScreenState extends State<ProfileScreen>
           Positioned.fill(
             child: Opacity(
               opacity: 0.3,
-              child:
-                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fondo_app.webp',
+                  fit: BoxFit.cover),
             ),
           ),
           ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             children: [
-              Center(child: _buildProfileHeader(userName, userEmail)),
+              Center(
+                  child: _buildProfileHeader(
+                      userName, userEmail, currentUser?.photoURL)),
               const SizedBox(height: 24),
               _buildStatsGrid(
                   coursesEnrolled, averageScore, daysInLearning, totalOfRings),
@@ -81,13 +96,13 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildProfileHeader(String name, String email) {
+  Widget _buildProfileHeader(String name, String email, String? photoUrl) {
     return Column(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 40,
-          backgroundImage:
-              NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
+          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+          child: photoUrl == null ? const Icon(Icons.person, size: 40) : null,
         ),
         const SizedBox(height: 12),
         Text(name,
@@ -152,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       unselectedLabelColor: Colors.white54,
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withAlpha(50), // Uso de withAlpha
       ),
       tabs: const [
         Tab(text: 'In progress'),
@@ -220,7 +235,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha(25), // Uso de withAlpha
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -228,7 +243,8 @@ class _StatCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor: color.withOpacity(0.3),
+            backgroundColor:
+                color.withOpacity(0.3), // withOpacity aquí es aceptable
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 12),
@@ -267,7 +283,7 @@ class _ProgressListItem extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(top: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withAlpha(25), // Uso de withAlpha
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -297,7 +313,7 @@ class _ProgressListItem extends StatelessWidget {
             Expanded(
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: Colors.white.withOpacity(0.2),
+                backgroundColor: Colors.white.withAlpha(50), // Uso de withAlpha
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 6,
                 borderRadius: BorderRadius.circular(3),
