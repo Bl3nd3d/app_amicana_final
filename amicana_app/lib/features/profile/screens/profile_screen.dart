@@ -244,7 +244,7 @@ class _StatCard extends StatelessWidget {
           CircleAvatar(
             radius: 18,
             backgroundColor:
-                color.withOpacity(0.3), // withOpacity aquí es aceptable
+                color.withValues(alpha: 0.3),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 12),
@@ -292,7 +292,7 @@ class _ProgressListItem extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                  backgroundColor: color.withOpacity(0.2),
+                  backgroundColor: color.withValues(alpha: 0.2),
                   child: Icon(icon, color: color)),
               const SizedBox(width: 12),
               Column(

@@ -39,8 +39,11 @@ class _LoginFormState extends State<LoginForm> {
                 prefixIcon: Icon(Icons.email_outlined),
               ),
               keyboardType: TextInputType.emailAddress,
-              validator: (v) =>
-                  v!.isEmpty || !v.contains('@') ? 'Correo inválido' : null,
+              validator: (v) {
+                if (v == null || v.isEmpty) return 'El correo es requerido';
+                final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+                return !emailRegex.hasMatch(v) ? 'Correo inválido' : null;
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -50,7 +53,9 @@ class _LoginFormState extends State<LoginForm> {
                 prefixIcon: Icon(Icons.lock_outline),
               ),
               obscureText: true,
-              validator: (v) => v!.isEmpty ? 'Ingresa tu contraseña' : null,
+              validator: (v) => v!.length < 6
+                  ? 'La contraseña debe tener al menos 6 caracteres'
+                  : null,
             ),
             const SizedBox(height: 24),
             BlocBuilder<AuthBloc, AuthState>(

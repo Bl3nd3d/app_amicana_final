@@ -33,7 +33,7 @@ class RegisterScreen extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Image.asset('assets/images/fondo_app.webp', fit: BoxFit.cover),
-              Container(color: Colors.black.withOpacity(0.5)),
+              Container(color: Colors.black.withValues(alpha: 0.5)),
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),

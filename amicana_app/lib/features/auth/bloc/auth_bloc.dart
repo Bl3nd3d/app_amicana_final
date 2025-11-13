@@ -49,7 +49,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         emit(AuthInitial());
       } catch (e) {
-        print('Error al cerrar sesión: $e');
+        // TODO: Implementar logger apropiado
+        // print('Error al cerrar sesión: $e');
       }
     });
   }

@@ -16,6 +16,14 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordController = TextEditingController();
   bool _obscureText = true;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   void _onRegisterPressed() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(RegisterButtonPressed(
@@ -76,8 +84,11 @@ class _RegisterFormState extends State<RegisterForm> {
               prefixIconColor: inputDecorationTheme.prefixIconColor,
             ),
             keyboardType: TextInputType.emailAddress,
-            validator: (v) =>
-                v!.isEmpty || !v.contains('@') ? 'Correo inválido' : null,
+            validator: (v) {
+              if (v == null || v.isEmpty) return 'El correo es requerido';
+              final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+              return !emailRegex.hasMatch(v) ? 'Correo inválido' : null;
+            },
           ),
           const SizedBox(height: 20),
           // Campo de Contraseña

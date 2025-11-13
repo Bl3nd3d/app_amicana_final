@@ -27,7 +27,8 @@ class ApiClient {
           // Puedes manejar errores de forma centralizada aquí.
           // Por ejemplo, si el error es 401 (No autorizado), podrías
           // redirigir al login.
-          print('ERROR EN PETICIÓN: ${e.message}');
+          // TODO: Implementar logger apropiado (ej: logger package)
+          // print('ERROR EN PETICIÓN: ${e.message}');
           return handler.next(e); // Continúa con el error.
         },
       ),

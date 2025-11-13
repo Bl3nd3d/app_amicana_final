@@ -193,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSettingsGroup(List<Widget> children) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -202,7 +202,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return children[index ~/ 2];
           }
           return Divider(
-              height: 1, color: Colors.white.withOpacity(0.15), indent: 56);
+              height: 1, color: Colors.white.withValues(alpha: 0.15), indent: 56);
         }),
       ),
     );

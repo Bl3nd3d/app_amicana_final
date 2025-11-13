@@ -19,9 +19,13 @@ class LoginScreen extends StatelessWidget {
             if (user.roles.length == 1) {
               final singleRole = user.roles.first;
               await authService.saveSelectedRole(singleRole);
-              context.go('/library');
+              if (context.mounted) {
+                context.go('/library');
+              }
             } else {
-              context.go('/select-role', extra: user);
+              if (context.mounted) {
+                context.go('/select-role', extra: user);
+              }
             }
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context)
@@ -42,8 +46,8 @@ class LoginScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.black.withOpacity(0.4),
-                    Colors.black.withOpacity(0.7)
+                    Colors.black.withValues(alpha: 0.4),
+                    Colors.black.withValues(alpha: 0.7)
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -72,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                         elevation: 8,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16)),
-                        color: Colors.white.withOpacity(0.95),
+                        color: Colors.white.withValues(alpha: 0.95),
                         child: const LoginForm(),
                       ),
                       const SizedBox(height: 24),

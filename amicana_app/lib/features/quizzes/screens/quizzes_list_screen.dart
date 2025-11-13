@@ -89,7 +89,7 @@ class _QuizListItem extends StatelessWidget {
     }
 
     return Card(
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withValues(alpha: 0.1),
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -102,7 +102,7 @@ class _QuizListItem extends StatelessWidget {
         leading: Icon(Icons.quiz, color: Theme.of(context).primaryColor),
         trailing: Chip(
           label: Text(statusText),
-          backgroundColor: statusColor.withOpacity(0.2),
+          backgroundColor: statusColor.withValues(alpha: 0.2),
           labelStyle: TextStyle(
               color: statusColor, fontWeight: FontWeight.bold, fontSize: 12),
         ),

@@ -76,7 +76,7 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
           preferredSize: const Size.fromHeight(4.0),
           child: LinearProgressIndicator(
             value: (_currentQuestionIndex + 1) / questionCount,
-            backgroundColor: Colors.white.withOpacity(0.2),
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
           ),
         ),
@@ -115,8 +115,8 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
                         return Card(
                           color:
                               _selectedAnswers[_currentQuestionIndex] == index
-                                  ? Colors.blue.withOpacity(0.3)
-                                  : Colors.white.withOpacity(0.1),
+                                  ? Colors.blue.withValues(alpha: 0.3)
+                                  : Colors.white.withValues(alpha: 0.1),
                           child: RadioListTile<int>(
                             title: Text(currentQuestion.options[index],
                                 style: const TextStyle(color: Colors.white)),
@@ -185,7 +185,7 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
             child: Opacity(
               opacity: 0.3,
               child:
-                  Image.asset('assets/images/fondo_app.png', fit: BoxFit.cover),
+                  Image.asset('assets/images/fondo_app.webp', fit: BoxFit.cover),
             ),
           ),
           Center(

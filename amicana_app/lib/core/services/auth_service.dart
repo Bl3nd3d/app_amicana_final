@@ -31,8 +31,9 @@ class AuthService {
     try {
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      if (credential.user == null)
+      if (credential.user == null) {
         throw Exception('No se encontró el usuario.');
+      }
       return _userFromFirebase(credential.user!);
     } on firebase.FirebaseAuthException catch (e) {
       throw Exception(e.message ?? 'Ocurrió un error desconocido.');
@@ -49,8 +50,9 @@ class AuthService {
       await credential.user?.updateDisplayName(name);
       await credential.user?.reload();
       final updatedUser = _firebaseAuth.currentUser;
-      if (updatedUser == null)
+      if (updatedUser == null) {
         throw Exception('No se pudo completar el registro.');
+      }
       return _userFromFirebase(updatedUser);
     } on firebase.FirebaseAuthException catch (e) {
       throw Exception(e.message ?? 'Ocurrió un error desconocido.');
@@ -60,16 +62,18 @@ class AuthService {
   Future<User> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null)
+      if (googleUser == null) {
         throw Exception('Inicio de sesión con Google cancelado.');
+      }
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final credential = firebase.GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
       final userCredential =
           await _firebaseAuth.signInWithCredential(credential);
-      if (userCredential.user == null)
+      if (userCredential.user == null) {
         throw Exception('No se pudo iniciar sesión con Google.');
+      }
       return _userFromFirebase(userCredential.user!);
     } catch (e) {
       throw Exception('Error al iniciar sesión con Google: ${e.toString()}');

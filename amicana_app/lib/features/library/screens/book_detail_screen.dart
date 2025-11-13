@@ -115,7 +115,7 @@ class BookDetailScreen extends StatelessWidget {
                               style: const TextStyle(color: Colors.white)),
                           onTap: () {
                             context.push(
-                              'chapter/${chapter.id}',
+                              '/books/${book.id}/chapter/${chapter.id}',
                               extra: {'book': state.book, 'chapter': chapter},
                             );
                           },
