@@ -1,3 +1,5 @@
+import 'package:amicana_app/core/services/auth_service.dart';
+import 'package:amicana_app/features/library/services/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,9 +15,21 @@ void main() async {
   );
 
   runApp(
-    BlocProvider(
-      create: (context) => AuthBloc(),
-      child: const MyApp(),
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthService>(
+          create: (context) => AuthService(),
+        ),
+        RepositoryProvider<ProgressService>(
+          create: (context) => ProgressService(),
+        ),
+      ],
+      child: BlocProvider(
+        create: (context) => AuthBloc(
+          authService: RepositoryProvider.of<AuthService>(context),
+        ),
+        child: const MyApp(),
+      ),
     ),
   );
 }

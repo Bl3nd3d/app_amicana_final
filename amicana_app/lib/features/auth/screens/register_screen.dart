@@ -1,3 +1,4 @@
+import 'package:amicana_app/core/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +12,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (context) => AuthBloc(),
+        create: (context) => AuthBloc(authService: RepositoryProvider.of<AuthService>(context)),
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is RegistrationSuccess) {

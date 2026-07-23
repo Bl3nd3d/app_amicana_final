@@ -1,90 +1,87 @@
 import 'package:amicana_app/core/models/progress_model.dart';
 import 'package:amicana_app/features/library/services/progress_service.dart';
+import 'package:amicana_app/features/profile/bloc/progress_bloc/progress_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ProgressScreen extends StatefulWidget {
+class ProgressScreen extends StatelessWidget {
   const ProgressScreen({super.key});
 
   @override
-  State<ProgressScreen> createState() => _ProgressScreenState();
-}
-
-class _ProgressScreenState extends State<ProgressScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final ProgressService _progressService = ProgressService();
-  late Future<Progress> _progressFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _progressFuture = _progressService.getProgress();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A183C),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: () => context.go('/library'),
-        ),
-        title: const Text('Progress',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.3,
-              child: Image.asset('assets/images/fondo_app.webp',
-                  fit: BoxFit.cover),
+    return BlocProvider(
+      create: (context) => ProgressBloc(
+        progressService: RepositoryProvider.of<ProgressService>(context),
+      )..add(LoadProgress()),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          backgroundColor: const Color(0xFF0A183C),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () => context.go('/library'),
             ),
+            title: const Text('Progress',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            centerTitle: true,
           ),
-          FutureBuilder<Progress>(
-            future: _progressFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(
-                    child: Text('Error: ${snapshot.error}',
-                        style: const TextStyle(color: Colors.white)));
-              } else if (snapshot.hasData) {
-                final progress = snapshot.data!;
-                return ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  children: [
-                    _buildTabs(),
-                    const SizedBox(height: 24),
-                    _buildCircularStats(progress),
-                    const SizedBox(height: 24),
-                    _buildPodium(),
-                    const SizedBox(height: 24),
-                    _buildTabContent(progress),
-                    const SizedBox(height: 20),
-                  ],
-                );
-              } else {
-                return const Center(
-                    child: Text('No progress data available.',
-                        style: TextStyle(color: Colors.white)));
-              }
-            },
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.3,
+                  child: Image.asset('assets/images/fondo_app.webp',
+                      fit: BoxFit.cover),
+                ),
+              ),
+              BlocBuilder<ProgressBloc, ProgressState>(
+                builder: (context, state) {
+                  if (state is ProgressLoading || state is ProgressInitial) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is ProgressError) {
+                    return Center(
+                        child: Text('Error: ${state.message}',
+                            style: const TextStyle(color: Colors.white)));
+                  } else if (state is ProgressLoaded) {
+                    final progress = state.progress;
+                    return ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      children: [
+                        Center(
+                          child: Text(
+                            '¡Vamos, ${progress.userName}!',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        _buildTabs(),
+                        const SizedBox(height: 24),
+                        _buildCircularStats(progress),
+                        const SizedBox(height: 24),
+                        _buildPodium(),
+                        const SizedBox(height: 24),
+                        _buildTabContent(progress),
+                        const SizedBox(height: 20),
+                      ],
+                    );
+                  } else {
+                    return const Center(
+                        child: Text('No progress data available.',
+                            style: TextStyle(color: Colors.white)));
+                  }
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -99,7 +96,6 @@ class _ProgressScreenState extends State<ProgressScreen>
           borderRadius: BorderRadius.circular(20),
         ),
         child: TabBar(
-          controller: _tabController,
           labelColor: Colors.black,
           unselectedLabelColor: Colors.white,
           indicator: BoxDecoration(
@@ -119,7 +115,6 @@ class _ProgressScreenState extends State<ProgressScreen>
     return SizedBox(
       height: 350,
       child: TabBarView(
-        controller: _tabController,
         children: [
           _buildRankedList(progress),
           const Center(
@@ -191,6 +186,8 @@ class _ProgressScreenState extends State<ProgressScreen>
         return Icons.groups_outlined;
       case 'campaign_outlined':
         return Icons.campaign_outlined;
+      case 'history_edu_outlined':
+        return Icons.history_edu_outlined;
       default:
         return Icons.help_outline;
     }

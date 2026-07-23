@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   final String id;
   final String name;
@@ -12,6 +14,26 @@ class User {
     required this.roles,
     this.completedChapterIds = const [],
   });
+
+  factory User.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return User(
+      id: doc.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      roles: List<String>.from(data['roles'] ?? []),
+      completedChapterIds: List<String>.from(data['completedChapterIds'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'email': email,
+      'roles': roles,
+      'completedChapterIds': completedChapterIds,
+    };
+  }
 
   User copyWith({
     String? id,
