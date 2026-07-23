@@ -256,7 +256,7 @@ class _TopicButton extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _TopicButton({
-
+    super.key,
       required this.title,
       required this.color,
       required this.icon,

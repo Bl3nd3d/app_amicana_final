@@ -1,302 +1,285 @@
-import 'package:amicana_app/core/models/progress_model.dart';
-import 'package:amicana_app/features/library/services/progress_service.dart';
-import 'package:amicana_app/features/profile/bloc/progress_bloc/progress_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:amicana_app/features/profile/bloc/progress_bloc.dart';
+import 'package:amicana_app/features/profile/bloc/progress_state.dart';
+import 'package:amicana_app/core/models/progress_model.dart';
 
 class ProgressScreen extends StatelessWidget {
   const ProgressScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProgressBloc(
-        progressService: RepositoryProvider.of<ProgressService>(context),
-      )..add(LoadProgress()),
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          backgroundColor: const Color(0xFF0A183C),
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => context.go('/library'),
+    return Scaffold(
+        backgroundColor: const Color(0xFF0A183C),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text('Your Progress',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.3,
+                child: Image.asset('assets/images/fondo_app.webp',
+                    fit: BoxFit.cover),
+              ),
             ),
-            title: const Text('Progress',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            centerTitle: true,
-          ),
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: Opacity(
-                  opacity: 0.3,
-                  child: Image.asset('assets/images/fondo_app.webp',
-                      fit: BoxFit.cover),
-                ),
-              ),
-              BlocBuilder<ProgressBloc, ProgressState>(
-                builder: (context, state) {
-                  if (state is ProgressLoading || state is ProgressInitial) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is ProgressError) {
-                    return Center(
-                        child: Text('Error: ${state.message}',
-                            style: const TextStyle(color: Colors.white)));
-                  } else if (state is ProgressLoaded) {
-                    final progress = state.progress;
-                    return ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      children: [
-                        Center(
-                          child: Text(
-                            '¡Vamos, ${progress.userName}!',
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        _buildTabs(),
-                        const SizedBox(height: 24),
-                        _buildCircularStats(progress),
-                        const SizedBox(height: 24),
-                        _buildPodium(),
-                        const SizedBox(height: 24),
-                        _buildTabContent(progress),
-                        const SizedBox(height: 20),
-                      ],
-                    );
-                  } else {
+            BlocBuilder<ProgressBloc, ProgressState>(
+              builder: (context, state) {
+                if (state is ProgressLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is ProgressError) {
+                  return Center(
+                      child: Text('Error: ${state.message}',
+                          style: const TextStyle(color: Colors.red)));
+                }
+                if (state is ProgressLoaded) {
+                  // If there's no data, show a message.
+                  if (state.progress.categoryStats.isEmpty) {
                     return const Center(
-                        child: Text('No progress data available.',
-                            style: TextStyle(color: Colors.white)));
+                      child: Text(
+                        'No progress yet. Start a lesson to see your stats!',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
                   }
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabs() {
-    return Center(
-      child: Container(
-        width: 250,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: Colors.white.withAlpha(25),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: TabBar(
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.white,
-          indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white,
-          ),
-          tabs: const [
-            Tab(text: 'All Time'),
-            Tab(text: 'Weekly'),
+                  return _buildProgressContent(context, state);
+                }
+                return const Center(
+                    child: Text('Something went wrong.',
+                        style: TextStyle(color: Colors.white)));
+              },
+            ),
           ],
         ),
-      ),
-    );
+      );
   }
 
-  Widget _buildTabContent(Progress progress) {
-    return SizedBox(
-      height: 350,
-      child: TabBarView(
-        children: [
-          _buildRankedList(progress),
-          const Center(
-              child: Text('Weekly progress is not available yet.',
-                  style: TextStyle(color: Colors.white70))),
+  Widget _buildProgressContent(BuildContext context, ProgressLoaded state) {
+    final sortedStats = state.sortedCategoryStats;
+    final top3 = sortedStats.take(3).toList();
+    final rest = sortedStats.length > 3 ? sortedStats.skip(3).toList() : <MapEntry<String, int>>[];
+
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        _buildCircularStats(context, state.progress),
+        const SizedBox(height: 32),
+        if (top3.isNotEmpty) ...[
+          _buildSectionTitle(context, 'Top Skills'),
+          const SizedBox(height: 16),
+          _buildPodium(context, top3),
+          const SizedBox(height: 32),
         ],
-      ),
+        if (rest.isNotEmpty) ...[
+          _buildSectionTitle(context, 'All Skills'),
+          const SizedBox(height: 16),
+          _buildRankedList(context, rest),
+        ]
+      ],
     );
   }
 
-  Widget _buildCircularStats(Progress progress) {
+  Widget _buildCircularStats(BuildContext context, Progress progress) {
+    // As per prompt, assuming 1000 points total for percentage calculation
+    const double maxPoints = 1000.0;
+    
+    final readingPoints = progress.categoryStats['Reading'] ?? 0;
+    final speakerPoints = progress.categoryStats['Speaker'] ?? 0;
+    final writingPoints = progress.categoryStats['Writing'] ?? 0;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _CircularStat(
-            icon: Icons.menu_book,
-            label: 'Readings',
-            percentage: progress.readingPercentage,
-            color: Colors.blue),
+            label: 'Reading',
+            value: readingPoints / maxPoints,
+            points: readingPoints),
         _CircularStat(
-            icon: Icons.mic,
             label: 'Speaker',
-            percentage: progress.speakerPercentage,
-            color: Colors.yellow),
+            value: speakerPoints / maxPoints,
+            points: speakerPoints),
         _CircularStat(
-            icon: Icons.edit,
             label: 'Writing',
-            percentage: progress.writingPercentage,
-            color: Colors.red),
+            value: writingPoints / maxPoints,
+            points: writingPoints),
       ],
     );
   }
 
-  Widget _buildPodium() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildPodium(BuildContext context, List<MapEntry<String, int>> top3) {
+    // Simple Row-based podium
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _PodiumStep(rank: '2', height: 60, color: Color(0xFFC0C0C0)),
-        SizedBox(width: 4),
-        _PodiumStep(rank: '1', height: 90, color: Color(0xFFFFD700)),
-        SizedBox(width: 4),
-        _PodiumStep(rank: '3', height: 40, color: Color(0xFFCD7F32)),
+        if (top3.length > 1) _PodiumItem(entry: top3[1], place: 2),
+        if (top3.isNotEmpty) _PodiumItem(entry: top3[0], place: 1),
+        if (top3.length > 2) _PodiumItem(entry: top3[2], place: 3),
       ],
     );
   }
 
-  Widget _buildRankedList(Progress progress) {
-    return ListView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: progress.rankedList.map((item) {
-        return _RankedListItem(
-          rank: item['rank'],
-          icon: _iconFromString(item['icon']),
-          title: item['title'],
-        );
-      }).toList(),
+  Widget _buildRankedList(BuildContext context, List<MapEntry<String, int>> rest) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: rest.length,
+        itemBuilder: (context, index) {
+          final entry = rest[index];
+          return ListTile(
+            leading: Text(
+              '#${index + 4}', // Starts from #4
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 16),
+            ),
+            title: Text(entry.key, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            trailing: Text('${entry.value} pts', style: const TextStyle(color: Colors.blueAccent, fontSize: 16)),
+          );
+        },
+        separatorBuilder: (context, index) => Divider(height: 1, color: Colors.white.withValues(alpha: 0.15)),
+      ),
     );
   }
 
-  IconData _iconFromString(String iconName) {
-    switch (iconName) {
-      case 'image_outlined':
-        return Icons.image_outlined;
-      case 'youtube_searched_for_outlined':
-        return Icons.youtube_searched_for_outlined;
-      case 'groups_outlined':
-        return Icons.groups_outlined;
-      case 'campaign_outlined':
-        return Icons.campaign_outlined;
-      case 'history_edu_outlined':
-        return Icons.history_edu_outlined;
-      default:
-        return Icons.help_outline;
-    }
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 }
 
-// --- WIDGETS DE AYUDA ---
+// Helper Widgets for the screen
 
 class _CircularStat extends StatelessWidget {
-  final IconData icon;
   final String label;
-  final double percentage;
-  final Color color;
+  final double value; // 0.0 to 1.0
+  final int points;
+
   const _CircularStat(
-      {required this.icon,
-      required this.label,
-      required this.percentage,
-      required this.color});
+      {required this.label, required this.value, required this.points});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(
-          width: 70,
-          height: 70,
+          width: 80,
+          height: 80,
           child: Stack(
             fit: StackFit.expand,
             children: [
               CircularProgressIndicator(
-                value: percentage,
-                strokeWidth: 6,
-                backgroundColor: Colors.white.withAlpha(50),
-                valueColor: AlwaysStoppedAnimation<Color>(color),
+                value: value,
+                strokeWidth: 8,
+                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.lightBlueAccent),
               ),
-              Center(child: Icon(icon, color: Colors.white, size: 30)),
+              Center(
+                  child: Text('${(value * 100).toInt()}%',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold))),
             ],
           ),
         ),
         const SizedBox(height: 8),
-        Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 12)),
-        Text('${(percentage * 100).toInt()}%',
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+        Text(label, style: const TextStyle(color: Colors.white70)),
+        Text('$points pts', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ],
     );
   }
 }
 
-class _PodiumStep extends StatelessWidget {
-  final String rank;
-  final double height;
-  final Color color;
-  const _PodiumStep(
-      {required this.rank, required this.height, required this.color});
+class _PodiumItem extends StatelessWidget {
+  final MapEntry<String, int> entry;
+  final int place;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      height: height,
-      decoration: BoxDecoration(
-          color: Colors.white.withAlpha(25),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
-          ),
-          border: Border.all(color: Colors.white24)),
-      child: Center(
-        child: Text(
-          rank,
-          style: TextStyle(
-              color: color, fontSize: 40, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
+  const _PodiumItem({required this.entry, required this.place});
+
+  double _getHeight() {
+    switch (place) {
+      case 1:
+        return 120;
+      case 2:
+        return 90;
+      case 3:
+        return 70;
+      default:
+        return 70;
+    }
   }
-}
 
-class _RankedListItem extends StatelessWidget {
-  final int rank;
-  final IconData icon;
-  final String title;
-  const _RankedListItem(
-      {required this.rank, required this.icon, required this.title});
+  Color _getColor() {
+    switch (place) {
+      case 1:
+        return Colors.amber;
+      case 2:
+        return Colors.grey[400]!;
+      case 3:
+        return Colors.brown[400]!;
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      margin: const EdgeInsets.only(top: 12),
+      height: _getHeight(),
+      width: 100,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(25),
-        borderRadius: BorderRadius.circular(16),
+        color: _getColor(),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: _getColor().withValues(alpha: 0.5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('$rank',
-              style: const TextStyle(color: Colors.white70, fontSize: 16)),
-          const SizedBox(width: 16),
-          CircleAvatar(
-            backgroundColor: Colors.white.withAlpha(25),
-            child: Icon(icon, color: Colors.white70, size: 20),
+          Text(
+            place.toString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
           ),
-          const SizedBox(width: 16),
-          Text(title,
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Text(
+            entry.key,
+            style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            '${entry.value} pts',
+            style: const TextStyle(color: Colors.black54),
+          ),
         ],
       ),
     );

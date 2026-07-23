@@ -44,29 +44,9 @@ class ProgressService {
     // 2. Get completed chapters for the current user
     final completedChapters = currentUser.completedChapterIds.length;
 
-    // 3. Calculate percentages
-    double readingPercentage =
-        totalChapters > 0 ? completedChapters / totalChapters : 0.0;
-    
-    // The user mentioned these are also fake, for now I will keep them as they are
-    // until the user requests to change them.
-    double speakerPercentage = readingPercentage * 0.8;
-    double writingPercentage = readingPercentage * 0.3;
-
-    // 4. Mocked ranked list (as pointed out by the user)
-    var rankedList = [
-      {'rank': 4, 'title': 'Copywriting', 'icon': 'image_outlined'},
-      {'rank': 5, 'title': 'Questions', 'icon': 'youtube_searched_for_outlined'},
-      {'rank': 6, 'title': 'Networking', 'icon': 'groups_outlined'},
-      {'rank': 7, 'title': 'Storytelling', 'icon': 'history_edu_outlined'},
-    ];
-
     return Progress(
-      userName: currentUser.name,
-      readingPercentage: readingPercentage,
-      speakerPercentage: speakerPercentage,
-      writingPercentage: writingPercentage,
-      rankedList: rankedList,
+      totalCompletedChapters: completedChapters,
+      categoryStats: {}, // This service doesn't calculate category-specific stats
     );
   }
 }

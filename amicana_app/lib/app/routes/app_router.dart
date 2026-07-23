@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:amicana_app/core/services/progress_service.dart';
+import 'package:amicana_app/features/profile/bloc/progress_bloc.dart';
+import 'package:amicana_app/features/profile/bloc/progress_event.dart';
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
@@ -24,8 +28,8 @@ class AppRouter {
     initialLocation: '/login',
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = firebase.FirebaseAuth.instance.currentUser != null;
-      final bool isPublicRoute = state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
+      final bool isPublicRoute =
+          state.matchedLocation == '/login' || state.matchedLocation == '/register';
       if (!loggedIn && !isPublicRoute) return '/login';
       if (loggedIn && isPublicRoute) return '/library';
       return null;
@@ -91,9 +95,14 @@ class AppRouter {
           name: 'settings',
           builder: (context, state) => const SettingsScreen()),
       GoRoute(
-          path: '/progress',
-          name: 'progress',
-          builder: (context, state) => const ProgressScreen()),
+        path: '/progress',
+        name: 'progress',
+        builder: (context, state) => BlocProvider(
+          create: (context) =>
+              ProgressBloc(progressService: ProgressService())..add(LoadProgress()),
+          child: const ProgressScreen(),
+        ),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       appBar: AppBar(title: const Text('Página no encontrada')),

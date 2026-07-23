@@ -1,16 +1,23 @@
 class Progress {
-  final String userName;
-  final double readingPercentage;
-  final double speakerPercentage;
-  final double writingPercentage;
-  // TODO: Replace with a real ranked list
-  final List<Map<String, dynamic>> rankedList;
+  final int totalCompletedChapters;
+  final Map<String, int> categoryStats;
 
   Progress({
-    required this.userName,
-    required this.readingPercentage,
-    required this.speakerPercentage,
-    required this.writingPercentage,
-    required this.rankedList,
+    this.totalCompletedChapters = 0,
+    this.categoryStats = const {},
   });
+
+  factory Progress.fromFirestore(Map<String, dynamic> data) {
+    // Safely extract completedChapters and calculate the total
+    final completedChapters = data['completedChapters'] as List<dynamic>? ?? [];
+    
+    // Safely extract stats, ensuring values are integers
+    final statsData = data['stats'] as Map<String, dynamic>? ?? {};
+    final categoryStats = statsData.map((key, value) => MapEntry(key, value as int));
+
+    return Progress(
+      totalCompletedChapters: completedChapters.length,
+      categoryStats: categoryStats,
+    );
+  }
 }

@@ -74,7 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           _isDarkMode = newValue;
                         });
                       },
-                      activeColor: Colors.blue,
+                      activeThumbColor: Colors.blue,
                     ),
                   ),
                 ]),

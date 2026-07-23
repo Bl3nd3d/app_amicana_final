@@ -53,7 +53,7 @@ class RegisterScreen extends StatelessWidget {
                       const Text(
                         'Sign up to A.M.I.C.A.N.A.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
