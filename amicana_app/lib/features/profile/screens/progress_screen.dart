@@ -1,3 +1,5 @@
+import 'package:amicana_app/core/models/progress_model.dart';
+import 'package:amicana_app/features/library/services/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,11 +13,14 @@ class ProgressScreen extends StatefulWidget {
 class _ProgressScreenState extends State<ProgressScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final ProgressService _progressService = ProgressService();
+  late Future<Progress> _progressFuture;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _progressFuture = _progressService.getProgress();
   }
 
   @override
@@ -48,18 +53,36 @@ class _ProgressScreenState extends State<ProgressScreen>
                   fit: BoxFit.cover),
             ),
           ),
-          ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            children: [
-              _buildTabs(),
-              const SizedBox(height: 24),
-              _buildCircularStats(),
-              const SizedBox(height: 24),
-              _buildPodium(),
-              const SizedBox(height: 24),
-              _buildTabContent(),
-              const SizedBox(height: 20),
-            ],
+          FutureBuilder<Progress>(
+            future: _progressFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(
+                    child: Text('Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white)));
+              } else if (snapshot.hasData) {
+                final progress = snapshot.data!;
+                return ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  children: [
+                    _buildTabs(),
+                    const SizedBox(height: 24),
+                    _buildCircularStats(progress),
+                    const SizedBox(height: 24),
+                    _buildPodium(),
+                    const SizedBox(height: 24),
+                    _buildTabContent(progress),
+                    const SizedBox(height: 20),
+                  ],
+                );
+              } else {
+                return const Center(
+                    child: Text('No progress data available.',
+                        style: TextStyle(color: Colors.white)));
+              }
+            },
           ),
         ],
       ),
@@ -92,13 +115,13 @@ class _ProgressScreenState extends State<ProgressScreen>
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(Progress progress) {
     return SizedBox(
       height: 350,
       child: TabBarView(
         controller: _tabController,
         children: [
-          _buildRankedList(),
+          _buildRankedList(progress),
           const Center(
               child: Text('Weekly progress is not available yet.',
                   style: TextStyle(color: Colors.white70))),
@@ -107,24 +130,24 @@ class _ProgressScreenState extends State<ProgressScreen>
     );
   }
 
-  Widget _buildCircularStats() {
-    return const Row(
+  Widget _buildCircularStats(Progress progress) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _CircularStat(
             icon: Icons.menu_book,
             label: 'Readings',
-            percentage: 0.40,
+            percentage: progress.readingPercentage,
             color: Colors.blue),
         _CircularStat(
             icon: Icons.mic,
             label: 'Speaker',
-            percentage: 0.45,
+            percentage: progress.speakerPercentage,
             color: Colors.yellow),
         _CircularStat(
             icon: Icons.edit,
             label: 'Writing',
-            percentage: 0.15,
+            percentage: progress.writingPercentage,
             color: Colors.red),
       ],
     );
@@ -144,24 +167,33 @@ class _ProgressScreenState extends State<ProgressScreen>
     );
   }
 
-  Widget _buildRankedList() {
+  Widget _buildRankedList(Progress progress) {
     return ListView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      children: const [
-        _RankedListItem(
-            rank: 4, icon: Icons.image_outlined, title: 'Copywriting'),
-        // --- LÍNEA CORREGIDA ---
-        _RankedListItem(
-            rank: 5,
-            icon: Icons.youtube_searched_for_outlined,
-            title: 'Questions'),
-        _RankedListItem(
-            rank: 5, icon: Icons.groups_outlined, title: 'Community Post'),
-        _RankedListItem(
-            rank: 6, icon: Icons.campaign_outlined, title: 'Public Speaking'),
-      ],
+      children: progress.rankedList.map((item) {
+        return _RankedListItem(
+          rank: item['rank'],
+          icon: _iconFromString(item['icon']),
+          title: item['title'],
+        );
+      }).toList(),
     );
+  }
+
+  IconData _iconFromString(String iconName) {
+    switch (iconName) {
+      case 'image_outlined':
+        return Icons.image_outlined;
+      case 'youtube_searched_for_outlined':
+        return Icons.youtube_searched_for_outlined;
+      case 'groups_outlined':
+        return Icons.groups_outlined;
+      case 'campaign_outlined':
+        return Icons.campaign_outlined;
+      default:
+        return Icons.help_outline;
+    }
   }
 }
 
