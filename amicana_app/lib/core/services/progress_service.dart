@@ -25,24 +25,36 @@ class ProgressService {
     });
   }
 
-  Future<void> saveProgress(String category, String chapterId) async {
+  Future<void> saveQuizResolution(
+      {required String quizId,
+      required int score,
+      required String category}) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) {
-      // Don't save progress if there's no user logged in.
-      throw Exception("User not logged in. Cannot save progress.");
+      throw Exception("User not logged in. Cannot save resolution.");
     }
 
-    final userDocRef = _firestore.collection('users').doc(user.uid);
+    final batch = _firestore.batch();
 
-    // Using .set with merge:true will create the document if it doesn't exist,
-    // and update it if it does. This handles the "lazy creation" case.
-    return userDocRef.set({
-      'completedChapters': FieldValue.arrayUnion([chapterId]),
-      'stats': {
-        category: FieldValue.increment(1),
-      },
-      // Also save user email to have it in the doc as per the schema example
-      'email': user.email,
-    }, SetOptions(merge: true));
+    final userRef = _firestore.collection('users').doc(user.uid);
+    final resolutionRef = userRef.collection('resolutions').doc();
+
+    // 1. Guardar el detalle de la resolución
+    batch.set(resolutionRef, {
+      'quizId': quizId,
+      'scoreObtained': score,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    // 2. Actualizar el consolidado dinámicamente
+    // Esto asume que el documento del usuario ya existe.
+    // Si no, la transacción fallará, lo cual es seguro.
+    batch.update(userRef, {
+      'globalScore': FieldValue.increment(score),
+      'categoryStats.$category': FieldValue.increment(score),
+      'completedQuizzes': FieldValue.arrayUnion([quizId]),
+    });
+
+    await batch.commit(); // Se ejecuta todo o nada
   }
 }

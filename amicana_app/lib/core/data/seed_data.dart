@@ -6,7 +6,7 @@ final List<Map<String, dynamic>> seedBooksData = [
     'title': 'The Scarlet Letter',
     'author': 'Nathaniel Hawthorne',
     'coverUrl':
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuWBXLoajUPhwf4AKNhTBOPKdMH-DxBW9g0Q&s',
+        'https://via.placeholder.com/200x300.png?text=The+Scarlet+Letter',
     'description':
         'Una historia de Hester Prynne, quien concibe una hija a través de un romance y lucha por crear una nueva vida de arrepentimiento y dignidad.',
     'chapters': [

@@ -1,3 +1,4 @@
+import 'package:amicana_app/core/services/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
@@ -37,7 +38,26 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
     }
   }
 
-  void _finishQuiz() {
+  void _finishQuiz() async {
+    final progressService = ProgressService();
+    final puntajeObtenido = _calculateScore();
+
+    try {
+      await progressService.saveQuizResolution(
+        quizId: widget.quiz.id,
+        score: puntajeObtenido,
+        category: widget.quiz.category,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      // Handle potential errors, e.g., show a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar el progreso: $e')),
+      );
+    }
+
+    if (!mounted) return;
+
     setState(() {
       _quizFinished = true;
     });

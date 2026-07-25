@@ -20,6 +20,7 @@ class QuizzesBloc extends Bloc<QuizzesEvent, QuizzesState> {
             id: 'q4-scarlet-letter',
             title: 'The Scarlet Letter: Chapter 1',
             description: 'Test your knowledge of the first chapter.',
+            category: 'Reading',
             startDate: now
                 .subtract(const Duration(days: 1)), // Hacemos que esté activo
             endDate: now.add(const Duration(days: 30)),
@@ -68,6 +69,7 @@ class QuizzesBloc extends Bloc<QuizzesEvent, QuizzesState> {
             id: 'q1',
             title: 'Historia Universal I',
             description: 'Prueba tus conocimientos sobre la Edad Antigua.',
+            category: 'History',
             startDate: now.subtract(const Duration(days: 2)),
             endDate: now.add(const Duration(days: 2)),
             questions: [
@@ -87,6 +89,7 @@ class QuizzesBloc extends Bloc<QuizzesEvent, QuizzesState> {
             id: 'q2',
             title: 'Literatura Clásica',
             description: 'Un repaso por las grandes obras de la literatura.',
+            category: 'Literature',
             startDate: now.subtract(const Duration(days: 10)),
             endDate: now.subtract(const Duration(days: 5)),
             questions: [

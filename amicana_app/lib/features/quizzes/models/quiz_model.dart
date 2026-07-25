@@ -4,6 +4,7 @@ class Quiz {
   final String id;
   final String title;
   final String description;
+  final String category;
   final DateTime startDate;
   final DateTime endDate;
   final List<Question> questions;
@@ -12,6 +13,7 @@ class Quiz {
     required this.id,
     required this.title,
     required this.description,
+    required this.category,
     required this.startDate,
     required this.endDate,
     required this.questions,
