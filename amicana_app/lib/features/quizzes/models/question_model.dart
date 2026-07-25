@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Question {
   final String id;
   final String text;
@@ -10,4 +12,14 @@ class Question {
     required this.options,
     required this.correctAnswerIndex,
   });
+
+  factory Question.fromFirestore(QueryDocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Question(
+      id: doc.id,
+      text: data['text'] ?? '',
+      options: List<String>.from(data['options'] ?? []),
+      correctAnswerIndex: data['correctAnswerIndex'] ?? 0,
+    );
+  }
 }

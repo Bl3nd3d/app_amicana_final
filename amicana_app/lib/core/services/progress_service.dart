@@ -25,6 +25,24 @@ class ProgressService {
     });
   }
 
+  Future<void> updateChapterProgress(String chapterId, bool isCompleted) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception("User not logged in. Cannot update chapter progress.");
+    }
+    final userDocRef = _firestore.collection('users').doc(user.uid);
+
+    if (isCompleted) {
+      await userDocRef.update({
+        'completedChapterIds': FieldValue.arrayUnion([chapterId])
+      });
+    } else {
+      await userDocRef.update({
+        'completedChapterIds': FieldValue.arrayRemove([chapterId])
+      });
+    }
+  }
+
   Future<void> saveQuizResolution(
       {required String quizId,
       required int score,

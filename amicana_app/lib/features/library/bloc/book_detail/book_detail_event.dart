@@ -5,10 +5,12 @@ abstract class BookDetailEvent {}
 
 class FetchBookDetails extends BookDetailEvent {
   final String bookId;
-  FetchBookDetails({required this.bookId});
+  final User user;
+  FetchBookDetails({required this.bookId, required this.user});
 }
 
 class ToggleChapterStatus extends BookDetailEvent {
   final String chapterId;
-  ToggleChapterStatus({required this.chapterId});
+  final bool isCompleted;
+  ToggleChapterStatus({required this.chapterId, required this.isCompleted});
 }

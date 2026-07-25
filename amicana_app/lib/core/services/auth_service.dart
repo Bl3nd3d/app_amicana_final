@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:amicana_app/core/models/user_model.dart';
@@ -5,26 +6,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final firebase.FirebaseAuth _firebaseAuth = firebase.FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  User _userFromFirebase(firebase.User fbUser) {
-    final name = fbUser.displayName ?? fbUser.email!.split('@').first;
-    final capitalizedName =
-        name.substring(0, 1).toUpperCase() + name.substring(1);
-
-    if (fbUser.email == 'admin@amicana.com') {
-      return User(
-        id: fbUser.uid,
-        name: capitalizedName,
-        email: fbUser.email!,
-        roles: ['superusuario', 'usuario_normal'],
-      );
+  Future<User> _userFromFirebase(firebase.User fbUser) async {
+    final userDoc = await _firestore.collection('users').doc(fbUser.uid).get();
+    if (!userDoc.exists) {
+      // This might happen if a user exists in Auth but not in Firestore.
+      // We can create it here, or throw an error. For now, let's throw.
+      throw Exception('El documento del usuario no existe en Firestore.');
     }
-    return User(
-      id: fbUser.uid,
-      name: capitalizedName,
-      email: fbUser.email!,
-      roles: ['usuario_normal'],
-    );
+    return User.fromFirestore(userDoc);
+  }
+
+  Future<void> _createUserDocument(firebase.User user, String name) async {
+    final userRef = _firestore.collection('users').doc(user.uid);
+    // Verificar si el documento ya existe para no sobrescribir roles
+    final doc = await userRef.get();
+    if (!doc.exists) {
+      await userRef.set({
+        'displayName': name,
+        'email': user.email,
+        'roles': ['usuario'],
+        'globalScore': 0,
+        'categoryStats': {},
+        'completedQuizzes': [],
+        'completedChapterIds': [],
+      });
+    }
   }
 
   Future<User> login({required String email, required String password}) async {
@@ -34,7 +42,7 @@ class AuthService {
       if (credential.user == null) {
         throw Exception('No se encontró el usuario.');
       }
-      return _userFromFirebase(credential.user!);
+      return await _userFromFirebase(credential.user!);
     } on firebase.FirebaseAuthException catch (e) {
       throw Exception(e.message ?? 'Ocurrió un error desconocido.');
     }
@@ -47,13 +55,22 @@ class AuthService {
     try {
       final credential = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      await credential.user?.updateDisplayName(name);
-      await credential.user?.reload();
-      final updatedUser = _firebaseAuth.currentUser;
-      if (updatedUser == null) {
+      
+      final fbUser = credential.user;
+      if (fbUser == null) {
         throw Exception('No se pudo completar el registro.');
       }
-      return _userFromFirebase(updatedUser);
+
+      await fbUser.updateDisplayName(name);
+      await _createUserDocument(fbUser, name);
+      await fbUser.reload();
+      
+      final updatedUser = _firebaseAuth.currentUser;
+      if (updatedUser == null) {
+        throw Exception('No se pudo recargar el usuario post-registro.');
+      }
+
+      return await _userFromFirebase(updatedUser);
     } on firebase.FirebaseAuthException catch (e) {
       throw Exception(e.message ?? 'Ocurrió un error desconocido.');
     }
@@ -69,12 +86,19 @@ class AuthService {
           await googleUser.authentication;
       final credential = firebase.GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+
       final userCredential =
           await _firebaseAuth.signInWithCredential(credential);
-      if (userCredential.user == null) {
+      final fbUser = userCredential.user;
+
+      if (fbUser == null) {
         throw Exception('No se pudo iniciar sesión con Google.');
       }
-      return _userFromFirebase(userCredential.user!);
+
+      // Si es un usuario nuevo, crea su documento en Firestore
+      await _createUserDocument(fbUser, fbUser.displayName ?? googleUser.displayName ?? 'Sin Nombre');
+
+      return await _userFromFirebase(fbUser);
     } catch (e) {
       throw Exception('Error al iniciar sesión con Google: ${e.toString()}');
     }

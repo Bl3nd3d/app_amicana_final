@@ -5,6 +5,9 @@ class User {
   final String name;
   final String email;
   final List<String> roles;
+  final int globalScore;
+  final Map<String, int> categoryStats;
+  final List<String> completedQuizzes;
   final List<String> completedChapterIds;
 
   User({
@@ -12,6 +15,9 @@ class User {
     required this.name,
     required this.email,
     required this.roles,
+    this.globalScore = 0,
+    this.categoryStats = const {},
+    this.completedQuizzes = const [],
     this.completedChapterIds = const [],
   });
 
@@ -19,20 +25,14 @@ class User {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return User(
       id: doc.id,
-      name: data['name'] ?? '',
+      name: data['displayName'] ?? data['name'] ?? '',
       email: data['email'] ?? '',
-      roles: List<String>.from(data['roles'] ?? []),
+      roles: List<String>.from(data['roles'] ?? ['usuario']),
+      globalScore: data['globalScore'] ?? 0,
+      categoryStats: Map<String, int>.from(data['categoryStats'] ?? {}),
+      completedQuizzes: List<String>.from(data['completedQuizzes'] ?? []),
       completedChapterIds: List<String>.from(data['completedChapterIds'] ?? []),
     );
-  }
-
-  Map<String, dynamic> toFirestore() {
-    return {
-      'name': name,
-      'email': email,
-      'roles': roles,
-      'completedChapterIds': completedChapterIds,
-    };
   }
 
   User copyWith({
@@ -40,6 +40,9 @@ class User {
     String? name,
     String? email,
     List<String>? roles,
+    int? globalScore,
+    Map<String, int>? categoryStats,
+    List<String>? completedQuizzes,
     List<String>? completedChapterIds,
   }) {
     return User(
@@ -47,6 +50,9 @@ class User {
       name: name ?? this.name,
       email: email ?? this.email,
       roles: roles ?? this.roles,
+      globalScore: globalScore ?? this.globalScore,
+      categoryStats: categoryStats ?? this.categoryStats,
+      completedQuizzes: completedQuizzes ?? this.completedQuizzes,
       completedChapterIds: completedChapterIds ?? this.completedChapterIds,
     );
   }
