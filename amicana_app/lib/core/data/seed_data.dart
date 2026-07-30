@@ -40,14 +40,58 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
         'audioUrl': 'https://open.spotify.com/track/2k5qBSP7L76HxUFefb75q6'
       }
     ]
-  }, // <-- Coma que separa un libro de otro
-
-  // --- Libro 2 (Puedes añadir más libros aquí) ---
-  // {
-  //   'id': 'otro-libro-id',
-  //   'title': 'Otro Libro',
-  //   ... (y así sucesivamente)
-  // }
+  },
+  // --- Libro 2: Sally's Phone ---
+  {
+    'id': "sallys-phone",
+    'title': "Sally's Phone",
+    'author': 'Oxford University',
+    'coverUrl': 'https://via.placeholder.com/200x300.png?text=Sallys+Phone',
+    'description': 'A story about Sally and her phone.',
+    'categories': ['Fiction', 'Beginner'],
+    'chapters': [
+      {
+        'id': 'sp-capitulo-1',
+        'title': 'Chapter 1: Morning',
+        'synopsis': 'This is the synopsis for chapter 1.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/Sally's%20Phone/Sally's%20Phone%20%201%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9TYWxseSdzIFBob25lL1NhbGx5J3MgUGhvbmUgIDEgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMDQ3OSwiZXhwIjoxODE2OTY2NDc5fQ.nHUBQr5rQCao5coUQL0JLzDunZTzHn4kOF9TDGV5d4g",
+        'audioUrl':
+            "https://open.spotify.com/episode/0Rl5YasMFtAVg8aKhbVQbh?si=se0ExgF6TLyHZXn8QlOS0A"
+      },
+      {
+        'id': 'sp-capitulo-2',
+        'title': 'Chapter 2: Lunchtime',
+        'synopsis': 'This is the synopsis for chapter 2.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/Sally's%20Phone/Sally's%20Phone%20%201%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9TYWxseSdzIFBob25lL1NhbGx5J3MgUGhvbmUgIDEgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMDQ3OSwiZXhwIjoxODE2OTY2NDc5fQ.nHUBQr5rQCao5coUQL0JLzDunZTzHn4kOF9TDGV5d4g",
+        'audioUrl':
+            "https://open.spotify.com/episode/0Rl5YasMFtAVg8aKhbVQbh?si=se0ExgF6TLyHZXn8QlOS0A"
+      },
+      {
+        'id': 'sp-capitulo-3',
+        'title': 'Chapter 3: Afternoon',
+        'synopsis': 'This is the synopsis for chapter 3.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/Sally's%20Phone/Sally's%20Phone%20%201%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9TYWxseSdzIFBob25lL1NhbGx5J3MgUGhvbmUgIDEgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMDQ3OSwiZXhwIjoxODE2OTY2NDc5fQ.nHUBQr5rQCao5coUQL0JLzDunZTzHn4kOF9TDGV5d4g",
+        'audioUrl':
+            "https://open.spotify.com/episode/0Rl5YasMFtAVg8aKhbVQbh?si=se0ExgF6TLyHZXn8QlOS0A"
+      },
+      {
+        'id': 'sp-capitulo-4',
+        'title': 'Chapter 4: Evening',
+        'synopsis': 'This is the synopsis for chapter 4.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/Sally's%20Phone/Sally's%20Phone%20%201%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9TYWxseSdzIFBob25lL1NhbGx5J3MgUGhvbmUgIDEgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMDQ3OSwiZXhwIjoxODE2OTY2NDc5fQ.nHUBQr5rQCao5coUQL0JLzDunZTzHn4kOF9TDGV5d4g",
+        'audioUrl':
+            "https://open.spotify.com/episode/0Rl5YasMFtAVg8aKhbVQbh?si=se0ExgF6TLyHZXn8QlOS0A"
+      }
+    ]
+  }
 ];
 
 // Estructura de datos para las trivias (quizzes) con sus preguntas.
