@@ -1,3 +1,4 @@
+import 'package:amicana_app/core/utils/logger.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:amicana_app/core/models/user_model.dart'; // <-- IMPORT AQUÍ
@@ -50,9 +51,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _authService.logout();
 
         emit(AuthInitial());
-      } catch (e) {
-        // TODO: Implementar logger apropiado
-        // print('Error al cerrar sesión: $e');
+      } catch (e, s) {
+        logger.e('Error al cerrar sesión', error: e, stackTrace: s);
+        emit(AuthFailure(
+            error: 'Logout failed. Please try again.'));
       }
     });
   }

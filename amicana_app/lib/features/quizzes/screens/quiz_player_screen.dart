@@ -1,3 +1,4 @@
+import 'package:amicana_app/features/quizzes/widgets/radio_group.dart' as custom_radio_group;
 import 'package:amicana_app/core/services/progress_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -96,7 +97,7 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
           preferredSize: const Size.fromHeight(4.0),
           child: LinearProgressIndicator(
             value: (_currentQuestionIndex + 1) / questionCount,
-            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            backgroundColor: const Color.fromRGBO(255, 255, 255, 0.2),
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
           ),
         ),
@@ -129,24 +130,10 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
                 const SizedBox(height: 24),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(currentQuestion.options.length,
-                          (index) {
-                        return Card(
-                          color:
-                              _selectedAnswers[_currentQuestionIndex] == index
-                                  ? Colors.blue.withValues(alpha: 0.3)
-                                  : Colors.white.withValues(alpha: 0.1),
-                          child: RadioListTile<int>(
-                            title: Text(currentQuestion.options[index],
-                                style: const TextStyle(color: Colors.white)),
-                            value: index,
-                            groupValue: _selectedAnswers[_currentQuestionIndex],
-                            onChanged: _onAnswerSelected,
-                            activeColor: Colors.lightBlueAccent,
-                          ),
-                        );
-                      }),
+                    child: custom_radio_group.RadioGroup(
+                      options: currentQuestion.options,
+                      groupValue: _selectedAnswers[_currentQuestionIndex],
+                      onChanged: _onAnswerSelected,
                     ),
                   ),
                 ),
@@ -159,9 +146,7 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
                           icon: const Icon(Icons.arrow_back),
                           onPressed: _previousQuestion,
                           label: const Text('Anterior')),
-                    // Spacer para empujar el botón de siguiente a la derecha si no hay botón de anterior
                     if (_currentQuestionIndex == 0) const Spacer(),
-
                     if (_currentQuestionIndex < questionCount - 1)
                       ElevatedButton.icon(
                           icon: const Icon(Icons.arrow_forward),
@@ -185,7 +170,6 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
     );
   }
 
-  // --- MÉTODO COMPLETO PARA LA PANTALLA DE RESULTADOS ---
   Widget _buildResultsScreen() {
     final score = _calculateScore();
     final total = widget.quiz.questions.length;
@@ -197,7 +181,7 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
         title: const Text('Resultados'),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, // Oculta la flecha de "atrás"
+        automaticallyImplyLeading: false,
       ),
       body: Stack(
         children: [
@@ -234,8 +218,7 @@ class _QuizPlayerScreenState extends State<QuizPlayerScreen> {
                         ?.copyWith(color: Colors.lightBlueAccent)),
                 const SizedBox(height: 48),
                 ElevatedButton(
-                  onPressed: () =>
-                      context.go('/quizzes'), // Vuelve a la lista de trivias
+                  onPressed: () => context.go('/quizzes'),
                   style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 32, vertical: 16)),

@@ -4,9 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:amicana_app/features/library/bloc/library_bloc.dart';
 import 'package:amicana_app/features/library/widgets/book_card.dart';
-import 'package:amicana_app/core/data/seed_data.dart';
-import 'package:amicana_app/features/library/models/book_model.dart';
-import 'package:amicana_app/core/models/chapter_model.dart';
 
 class LibraryHomeScreen extends StatelessWidget {
   const LibraryHomeScreen({super.key});
@@ -46,11 +43,13 @@ class LibraryHomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle(context, 'Explore topics'),
+                _buildSectionTitle(
+                    context, 'Explore topics', () => context.go('/explore-topics')),
                 const SizedBox(height: 16),
                 _buildTopicsGrid(context),
                 const SizedBox(height: 32),
-                _buildSectionTitle(context, 'Suggestion for you'),
+                _buildSectionTitle(context, 'Suggestion for you',
+                    () => context.go('/suggestions')),
               ],
             ),
           ),
@@ -94,7 +93,8 @@ class LibraryHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildSectionTitle(
+      BuildContext context, String title, VoidCallback onSeeMore) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -106,9 +106,12 @@ class LibraryHomeScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          'See more',
-          style: TextStyle(color: Colors.blue[300], fontSize: 14),
+        TextButton(
+          onPressed: onSeeMore,
+          child: Text(
+            'See more',
+            style: TextStyle(color: Colors.blue[300], fontSize: 14),
+          ),
         ),
       ],
     );
@@ -139,39 +142,7 @@ class LibraryHomeScreen extends StatelessWidget {
             title: 'Grammar',
             color: Colors.green[200]!,
             icon: Icons.spellcheck,
-            onTap: () {
-              // Obtenemos los datos del primer libro en nuestro archivo de prueba
-              final bookData = seedBooksData.firstWhere(
-                  (book) => book['id'] == 'the-scarlet-letter',
-                  orElse: () =>
-                      seedBooksData.first // Si no lo encuentra, usa el primero
-                  );
-              final chapterData = (bookData['chapters'] as List).first;
-
-              // Creamos los objetos Book y Chapter a partir de los datos
-              final grammarBook = Book(
-                id: bookData['id'],
-                title: bookData['title'],
-                author: bookData['author'],
-                coverUrl: bookData['coverUrl'],
-                description: bookData['description'],
-                chapters: [], // No necesitamos los otros capítulos para la navegación
-              );
-              final grammarChapter = Chapter(
-                id: chapterData['id'],
-                title: chapterData['title'],
-                synopsis: chapterData['synopsis'],
-                pageCount: chapterData['pageCount'],
-                pdfUrl: chapterData['pdfUrl'],
-                audioUrl: chapterData['audioUrl'],
-              );
-
-              // Navegamos a la pantalla de detalle del capítulo
-              context.push(
-                '/books/${grammarBook.id}/chapter/${grammarChapter.id}',
-                extra: {'book': grammarBook, 'chapter': grammarChapter},
-              );
-            }),
+            onTap: () => context.go('/grammar')),
 
         _TopicButton(
             title: 'Progress',
@@ -225,10 +196,17 @@ class LibraryHomeScreen extends StatelessWidget {
       onTap: (index) {
         switch (index) {
           case 0:
+            // Ya está en la pantalla de inicio, no es necesario hacer nada o recargar.
             context.go('/library');
+            break;
+          case 1:
+            context.go('/search');
             break;
           case 2:
             context.go('/books');
+            break;
+          case 3:
+            context.go('/saved');
             break;
           case 4:
             context.go('/profile');
@@ -255,9 +233,8 @@ class _TopicButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onTap;
 
-  const _TopicButton({
-    super.key,
-      required this.title,
+  const _TopicButton(
+      {required this.title,
       required this.color,
       required this.icon,
       this.onTap});

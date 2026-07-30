@@ -117,8 +117,8 @@ class _RegisterFormState extends State<RegisterForm> {
               hintStyle: inputDecorationTheme.hintStyle,
               prefixIconColor: inputDecorationTheme.prefixIconColor,
             ),
-            validator: (v) => v!.length < 6
-                ? 'La contraseña debe tener al menos 6 caracteres'
+            validator: (v) => v!.length < 8
+                ? 'La contraseña debe tener al menos 8 caracteres'
                 : null,
           ),
           const SizedBox(height: 40),

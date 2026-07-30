@@ -53,7 +53,7 @@ class RegisterScreen extends StatelessWidget {
                       const Text(
                         'Sign up to A.M.I.C.A.N.A.',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -67,9 +67,9 @@ class RegisterScreen extends StatelessWidget {
                       // y empuje el enlace de "Sign In" hacia abajo.
                       // También usamos SingleChildScrollView para evitar que el teclado
                       // cause un desbordamiento de píxeles.
-                      Expanded(
+                      const Expanded(
                         child: SingleChildScrollView(
-                          child: const RegisterForm(),
+                          child: RegisterForm(),
                         ),
                       ),
                       // El Spacer() que causaba el crash ha sido eliminado.

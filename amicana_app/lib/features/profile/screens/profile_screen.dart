@@ -1,14 +1,32 @@
+import 'package:amicana_app/core/services/progress_service.dart';
+import 'package:amicana_app/features/profile/bloc/progress_bloc.dart';
+import 'package:amicana_app/features/profile/bloc/progress_event.dart';
+import 'package:amicana_app/features/profile/bloc/progress_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          ProgressBloc(progressService: ProgressService())..add(LoadProgress()),
+      child: const ProfileView(),
+    );
+  }
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
+class ProfileView extends StatefulWidget {
+  const ProfileView({super.key});
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -35,18 +53,13 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     if (currentUser?.email != null && currentUser!.email!.isNotEmpty) {
       userName = currentUser.email!.split('@').first;
-      userName = userName.substring(0, 1).toUpperCase() + userName.substring(1);
+      userName =
+          userName.substring(0, 1).toUpperCase() + userName.substring(1);
       userEmail = currentUser.email!;
     } else if (currentUser?.displayName != null &&
         currentUser!.displayName!.isNotEmpty) {
       userName = currentUser.displayName!;
     }
-
-    // Datos simulados para las estadísticas
-    const String coursesEnrolled = '12';
-    const String averageScore = '50%';
-    const String daysInLearning = '98';
-    const String totalOfRings = '5';
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A183C),
@@ -76,20 +89,38 @@ class _ProfileScreenState extends State<ProfileScreen>
                   fit: BoxFit.cover),
             ),
           ),
-          ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            children: [
-              Center(
-                  child: _buildProfileHeader(
-                      userName, userEmail, currentUser?.photoURL)),
-              const SizedBox(height: 24),
-              _buildStatsGrid(
-                  coursesEnrolled, averageScore, daysInLearning, totalOfRings),
-              const SizedBox(height: 24),
-              _buildTabs(),
-              _buildTabContent(),
-              const SizedBox(height: 24),
-            ],
+          BlocBuilder<ProgressBloc, ProgressState>(
+            builder: (context, state) {
+              if (state is ProgressLoaded) {
+                final progress = state.progress;
+                final coursesEnrolled = progress.totalCompletedChapters.toString();
+                final averageScore = progress.completedQuizzesCount > 0
+                    ? ((progress.globalScore / progress.completedQuizzesCount) * 10)
+                        .round() 
+                    : 0;
+                final daysInLearning = progress.creationDate != null
+                    ? DateTime.now().difference(progress.creationDate!).inDays.toString()
+                    : '0';
+                const totalOfRings = '5'; // Hardcoded as per request
+
+                return ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  children: [
+                    Center(
+                        child: _buildProfileHeader(
+                            userName, userEmail, currentUser?.photoURL)),
+                    const SizedBox(height: 24),
+                    _buildStatsGrid(coursesEnrolled, '$averageScore%',
+                        daysInLearning, totalOfRings),
+                    const SizedBox(height: 24),
+                    _buildTabs(),
+                    _buildTabContent(progress.categoryStats),
+                    const SizedBox(height: 24),
+                  ],
+                );
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
           ),
         ],
       ),
@@ -167,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       unselectedLabelColor: Colors.white54,
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withAlpha(50), // Uso de withAlpha
+        color: Colors.white.withAlpha(50),
       ),
       tabs: const [
         Tab(text: 'In progress'),
@@ -177,13 +208,13 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(Map<String, int> categoryStats) {
     return SizedBox(
       height: 300,
       child: TabBarView(
         controller: _tabController,
         children: [
-          _buildProgressList(),
+          _buildProgressList(categoryStats),
           const Center(
               child: Text('No upcoming courses',
                   style: TextStyle(color: Colors.white70))),
@@ -195,26 +226,33 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildProgressList() {
+  Widget _buildProgressList(Map<String, int> categoryStats) {
+    if (categoryStats.isEmpty) {
+      return const Center(child: Text('No progress yet.', style: TextStyle(color: Colors.white70)));
+    }
     return ListView(
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
-      children: const [
-        _ProgressListItem(
-            icon: Icons.school_outlined,
-            title: 'STUDENT PROGRESS',
-            date: 'August 5, 2023',
-            progress: 34 / 120,
-            progressText: '34/120',
-            color: Colors.blue),
-        _ProgressListItem(
-            icon: Icons.edit_outlined,
-            title: 'WRITING',
-            date: 'August 3, 2023',
-            progress: 45 / 99,
-            progressText: '45/99',
-            color: Colors.pink),
-      ],
+      children: categoryStats.entries.map((entry) {
+        // Simple mapping from category to icon and color
+        IconData icon = Icons.school_outlined;
+        Color color = Colors.blue;
+        if (entry.key.toLowerCase() == 'writing') {
+          icon = Icons.edit_outlined;
+          color = Colors.pink;
+        } else if (entry.key.toLowerCase() == 'reading') {
+          icon = Icons.book_outlined;
+          color = Colors.green;
+        }
+
+        return _ProgressListItem(
+            icon: icon,
+            title: entry.key.toUpperCase(),
+            date: 'Updated recently', // Date is not available
+            progress: (entry.value % 100) / 100, // Example progress
+            progressText: '${entry.value} pts',
+            color: color);
+      }).toList(),
     );
   }
 }
@@ -235,7 +273,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(25), // Uso de withAlpha
+        color: Colors.white.withAlpha(25),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -243,8 +281,7 @@ class _StatCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor:
-                color.withValues(alpha: 0.3),
+            backgroundColor: color.withAlpha(75),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 12),
@@ -283,7 +320,7 @@ class _ProgressListItem extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(top: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(25), // Uso de withAlpha
+        color: Colors.white.withAlpha(25),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -292,7 +329,7 @@ class _ProgressListItem extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                  backgroundColor: color.withValues(alpha: 0.2),
+                  backgroundColor: color.withAlpha(50),
                   child: Icon(icon, color: color)),
               const SizedBox(width: 12),
               Column(
@@ -313,7 +350,7 @@ class _ProgressListItem extends StatelessWidget {
             Expanded(
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: Colors.white.withAlpha(50), // Uso de withAlpha
+                backgroundColor: Colors.white.withAlpha(50),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 6,
                 borderRadius: BorderRadius.circular(3),

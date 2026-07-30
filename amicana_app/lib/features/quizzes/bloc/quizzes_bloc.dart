@@ -2,7 +2,6 @@ import 'package:amicana_app/core/services/quiz_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import '../models/quiz_model.dart';
-import '../models/question_model.dart';
 
 part 'quizzes_event.dart';
 part 'quizzes_state.dart';

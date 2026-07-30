@@ -53,15 +53,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildSettingsTile(context,
                       icon: Icons.person_outline,
                       title: 'Personal Details',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/personal-details')),
                   _buildSettingsTile(context,
                       icon: Icons.videocam_outlined,
                       title: 'Preference Video',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/preference-video')),
                   _buildSettingsTile(context,
                       icon: Icons.download_outlined,
                       title: 'Your Download',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/your-download')),
                   ListTile(
                     leading: const Icon(Icons.dark_mode_outlined,
                         color: Colors.white70),
@@ -83,22 +83,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildSettingsTile(context,
                       icon: Icons.card_giftcard_outlined,
                       title: 'Referral Code',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/referral-code')),
                   _buildSettingsTile(context,
                       icon: Icons.calendar_today_outlined,
                       title: 'Learning Reminder',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/learning-reminder')),
                   _buildSettingsTile(context,
                       icon: Icons.confirmation_number_outlined,
                       title: 'Voucher Code',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/voucher-code')),
                 ]),
                 const SizedBox(height: 20),
                 _buildSettingsGroup([
                   _buildSettingsTile(context,
                       icon: Icons.help_outline,
                       title: 'Help Center',
-                      onTap: () {}),
+                      onTap: () => context.go('/settings/help-center')),
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.redAccent),
                     title: const Text('Cerrar Sesión',
@@ -143,6 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     child: const Text('Sí, Cargar Datos'),
                                     onPressed: () async {
                                       Navigator.of(ctx).pop();
+                                      if (!mounted) return;
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
