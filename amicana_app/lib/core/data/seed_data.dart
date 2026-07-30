@@ -91,6 +91,57 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
             "https://open.spotify.com/episode/0Rl5YasMFtAVg8aKhbVQbh?si=se0ExgF6TLyHZXn8QlOS0A"
       }
     ]
+  },
+  // --- Libro 3: The Giver - Lois Lowry ---
+  {
+    'id': "The-Giver-Lois-Lowry",
+    'title': "The Giver - Lois Lowry",
+    'author': 'Lois Lowry',
+    'coverUrl': 'https://via.placeholder.com/200x300.png?text=The+Giver',
+    'description': 'A story about Jonas, who lives in a seemingly Utopian society until he is selected to be the Receiver of Memory.',
+    'categories': ['Fiction', 'Young Adult'],
+    'chapters': [
+      {
+        'id': 'tg-capitulo-1',
+        'title': 'Chapter 1',
+        'synopsis': 'This is the synopsis for chapter 1.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/The%20Giver%20-%20Lois%20Lowry/The%20Giver%20-%20Lois%20Lowry%20%205%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9UaGUgR2l2ZXIgLSBMb2lzIExvd3J5L1RoZSBHaXZlciAtIExvaXMgTG93cnkgIDUgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMzQxOCwiZXhwIjoxODE2OTY2NDE4fQ.I9Ff1E1xXFvlbIpzB6obgCuNLcMLT2QX379pdaG0Zzc",
+        'audioUrl':
+            "https://open.spotify.com/episode/3OXG9s27wh30BOfai6p47M?si=14398d7088164cbc"
+      },
+      {
+        'id': 'tg-capitulo-2',
+        'title': 'Chapter 2',
+        'synopsis': 'This is the synopsis for chapter 2.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/The%20Giver%20-%20Lois%20Lowry/The%20Giver%20-%20Lois%20Lowry%20%205%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9UaGUgR2l2ZXIgLSBMb2lzIExvd3J5L1RoZSBHlWl2ZXIgLSBMb2lzIExvd3J5IDUgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMzQxOCwiZXhwIjoxODE2OTY2NDE4fQ.I9Ff1E1xXFvlbIpzB6obgCuNLcMLT2QX379pdaG0Zzc",
+        'audioUrl':
+            "https://open.spotify.com/episode/1psrkYQ3vyjvF6IAVh1pdr?si=f94db205c82b4dc9"
+      },
+      {
+        'id': 'tg-capitulo-3',
+        'title': 'Chapter 3',
+        'synopsis': 'This is the synopsis for chapter 3.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/The%20Giver%20-%20Lois%20Lowry/The%20Giver%20-%20Lois%20Lowry%20%205%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9UaGUgR2l2ZXIgLSBMb2lzIExvd3J5L1RoZSBHaXZlciAtIExvaXMgTG93cnkgIDUgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMzQxOCwiZXhwIjoxODE2OTY2NDE4fQ.I9Ff1E1xXFvlbIpzB6obgCuNLcMLT2QX379pdaG0Zzc",
+        'audioUrl':
+            "https://open.spotify.com/episode/4bl6d8OprIXTdajRSTFwvB?si=157791b192884662"
+      },
+      {
+        'id': 'tg-capitulo-4',
+        'title': 'Chapter 4',
+        'synopsis': 'This is the synopsis for chapter 4.',
+        'pageCount': 10,
+        'pdfUrl':
+            "https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/The%20Giver%20-%20Lois%20Lowry/The%20Giver%20-%20Lois%20Lowry%20%205%20AD.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmJkLWJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy9UaGUgR2l2ZXIgLSBMb2lzIExvd3J5L1RoZSBHaXZlciAtIExvaXMgTG93cnkgIDUgQUQucGRmIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NTQzMzQxOCwiZXhwIjoxODE2OTY2NDE4fQ.I9Ff1E1xXFvlbIpzB6obgCuNLcMLT2QX379pdaG0Zzc",
+        'audioUrl':
+            "https://open.spotify.com/episode/1AzfmXnH9P9Xk3bosQgqji?si=86b8e4179d7640ae"
+      }
+    ]
   }
 ];
 
