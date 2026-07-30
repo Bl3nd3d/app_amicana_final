@@ -8,6 +8,7 @@ import 'package:amicana_app/features/profile/bloc/progress_event.dart';
 import 'package:amicana_app/core/models/user_model.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
+import 'package:amicana_app/features/library/bloc/book_detail/book_detail_bloc.dart';
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
 import 'package:amicana_app/features/auth/screens/login_screen.dart';
 import 'package:amicana_app/features/auth/screens/register_screen.dart';
@@ -34,6 +35,7 @@ import 'package:amicana_app/features/library/screens/saved_screen.dart';
 class AppRouter {
   AppRouter._();
   static final GoRouter router = GoRouter(
+    debugLogDiagnostics: true,
     initialLocation: '/login',
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = firebase.FirebaseAuth.instance.currentUser != null;
@@ -70,8 +72,14 @@ class AppRouter {
             GoRoute(
                 path: ':bookId',
                 name: 'bookDetail',
-                builder: (context, state) =>
-                    BookDetailScreen(bookId: state.pathParameters['bookId']!),
+                builder: (context, state) {
+                  return BlocProvider(
+                    create: (context) => BookDetailBloc(),
+                    child: BookDetailScreen(
+                      bookId: state.pathParameters['bookId']!,
+                    ),
+                  );
+                },
                 routes: [
                   GoRoute(
                     path: 'chapter/:chapterId',

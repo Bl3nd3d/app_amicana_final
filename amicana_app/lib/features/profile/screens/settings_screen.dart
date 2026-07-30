@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
 import 'package:amicana_app/features/library/services/library_service.dart';
 import 'package:amicana_app/app/theme/theme_cubit.dart';
+import 'package:amicana_app/core/services/database_seeder_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -128,55 +129,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.orange[800]),
                           onPressed: () async {
-                            // Muestra un diálogo de confirmación para seguridad
-                            showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: const Text('Confirmar Acción'),
-                                content: const Text(
-                                    'Esto borrará los libros existentes y cargará los de prueba. ¿Estás seguro?'),
-                                actions: [
-                                  TextButton(
-                                    child: const Text('Cancelar'),
-                                    onPressed: () => Navigator.of(ctx).pop(),
-                                  ),
-                                  FilledButton(
-                                    child: const Text('Sí, Cargar Datos'),
-                                    onPressed: () async {
-                                      Navigator.of(ctx).pop();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content:
-                                                Text('Iniciando carga...')),
-                                      );
-                                      try {
-                                        await LibraryService().seedDatabase();
-                                        if (mounted) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                content: Text(
-                                                    '¡Datos de prueba cargados a Firestore!'),
-                                                backgroundColor: Colors.green),
-                                          );
-                                        }
-                                      } catch (e) {
-                                        if (mounted) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content:
-                                                    Text('Error al cargar: $e'),
-                                                backgroundColor: Colors.red),
-                                          );
-                                        }
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
-                            );
+                            try {
+                              // Llamas al seeder que desarmará y guardará todo correctamente
+                              await DatabaseSeeder.uploadSeedData();
+
+                              // Validación del linter para el contexto
+                              if (!mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      '¡Catálogo sincronizado sin romper la estructura!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } catch (e) {
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('Error: $e'),
+                                    backgroundColor: Colors.red),
+                              );
+                            }
                           },
                         ),
                       ],
@@ -192,18 +166,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // Widget de ayuda para crear los grupos de opciones
   Widget _buildSettingsGroup(List<Widget> children) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return Material(
+      color: Colors.white.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: List.generate(children.length * 2 - 1, (index) {
           if (index.isEven) {
             return children[index ~/ 2];
           }
           return Divider(
-              height: 1, color: Colors.white.withValues(alpha: 0.15), indent: 56);
+              height: 1, color: Colors.white.withOpacity(0.15), indent: 56);
         }),
       ),
     );
