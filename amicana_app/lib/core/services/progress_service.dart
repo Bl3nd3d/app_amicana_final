@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:amicana_app/core/models/progress_model.dart';
+import 'package:amicana_app/core/models/quiz_resolution_model.dart';
 
 class ProgressService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -43,10 +44,13 @@ class ProgressService {
     }
   }
 
-  Future<void> saveQuizResolution(
-      {required String quizId,
-      required int score,
-      required String category}) async {
+  Future<void> saveQuizResolution({
+    required String quizId,
+    required String quizTitle,
+    required int score,
+    required int totalQuestions,
+    required String category,
+  }) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) {
       throw Exception("User not logged in. Cannot save resolution.");
@@ -57,10 +61,15 @@ class ProgressService {
     final userRef = _firestore.collection('users').doc(user.uid);
     final resolutionRef = userRef.collection('resolutions').doc();
 
-    // 1. Guardar el detalle de la resolución
+    // 1. Guardar el detalle de la resolución (con título y total de
+    // preguntas desnormalizados, para poder mostrar el historial sin
+    // tener que volver a buscar la trivia original).
     batch.set(resolutionRef, {
       'quizId': quizId,
+      'quizTitle': quizTitle,
+      'category': category,
       'scoreObtained': score,
+      'totalQuestions': totalQuestions,
       'timestamp': FieldValue.serverTimestamp(),
     });
 
@@ -74,5 +83,27 @@ class ProgressService {
     });
 
     await batch.commit(); // Se ejecuta todo o nada
+  }
+
+  /// Devuelve el historial de trivias resueltas, más recientes primero.
+  /// Pasar [limit] para traer solo las últimas N (ej. en la pantalla de
+  /// Progreso); dejarlo en null trae todo el historial (ej. para calcular
+  /// un promedio general en el Perfil).
+  Stream<List<QuizResolution>> watchQuizResolutions({int? limit}) {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) return Stream.value(const []);
+
+    Query<Map<String, dynamic>> query = _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('resolutions')
+        .orderBy('timestamp', descending: true);
+
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    return query.snapshots().map(
+        (snap) => snap.docs.map((d) => QuizResolution.fromFirestore(d)).toList());
   }
 }

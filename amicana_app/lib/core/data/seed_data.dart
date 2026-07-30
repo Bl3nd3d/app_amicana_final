@@ -21,7 +21,7 @@ Next to the prison door stands a blooming wild rose bush. The narrator imagines 
 The narrator describes the rose bush as sitting on the threshold of the story he plans to tell. He then plucks one of the rose blossoms and offers it to the reader. He describes the gesture and the blossom as a symbol of the moral that the reader might learn in reading his "tale of human frailty and sorrow."
 ''',
         'pdfUrl':
-            'https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/the%20scarlet%20letter/the-scarlet-letter-websters-thesaurus-edition.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy90aGUgc2NhcmxldCBsZXR0ZXIvdGhlLXNjYXJsZXQtbGV0dGVyLXdlYnN0ZXJzLXRoZXNhdXJ1cy1lZGl0aW9uLnBkZiIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODUzOTE4NjcsImV4cCI6MTgxNjkyNzg2N30.SizS_5fHgMuMP5V9Rj8dsbHp0qENOU6mnIwwiMWGUwQ',
+            'https://vyqsylsofvukthfdantr.supabase.co/storage/v1/object/public/archivos-amicana/pdf_caps/chapter%201%20-.pdf',
         'audioUrl': 'https://open.spotify.com/track/1XwRyFRn2qU6phLtOQ53MI'
       },
       {
@@ -36,7 +36,7 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
 ''',
         'pageCount': 25,
         'pdfUrl':
-            'https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/the%20scarlet%20letter/the-scarlet-letter-websters-thesaurus-edition.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy90aGUgc2NhcmxldCBsZXR0ZXIvdGhlLXNjYXJsZXQtbGV0dGVyLXdlYnN0ZXJzLXRoZXNhdXJ1cy1lZGl0aW9uLnBkZiIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODUzOTE4NjcsImV4cCI6MTgxNjkyNzg2N30.SizS_5fHgMuMP5V9Rj8dsbHp0qENOU6mnIwwiMWGUwQ',
+            'https://vyqsylsofvukthfdantr.supabase.co/storage/v1/object/public/archivos-amicana/pdf_caps/CHAPTER%202.pdf',
         'audioUrl': 'https://open.spotify.com/track/2k5qBSP7L76HxUFefb75q6'
       }
     ]
@@ -48,4 +48,105 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
   //   'title': 'Otro Libro',
   //   ... (y así sucesivamente)
   // }
+];
+
+// Estructura de datos para las trivias (quizzes) con sus preguntas.
+// startDate/endDate son DateTime normales acá; QuizService los convierte
+// a Timestamp de Firestore al momento de cargar los datos.
+final List<Map<String, dynamic>> seedQuizzesData = [
+  // --- Trivia 1: activa ahora ---
+  {
+    'id': 'scarlet-letter-basics',
+    'title': 'The Scarlet Letter: Lo esencial',
+    'description': 'Preguntas sobre los primeros capítulos de la novela.',
+    'category': 'Literature',
+    'startDate': DateTime(2026, 1, 1),
+    'endDate': DateTime(2026, 12, 31),
+    'questions': [
+      {
+        'id': 'q1',
+        'text':
+            '¿Qué construyen primero los fundadores de un nuevo asentamiento, según el narrador?',
+        'options': [
+          'Una iglesia',
+          'Una prisión y un cementerio',
+          'Un mercado',
+          'Una escuela'
+        ],
+        'correctAnswerIndex': 1,
+      },
+      {
+        'id': 'q2',
+        'text': '¿Qué crece junto a la puerta de la prisión?',
+        'options': ['Un rosal silvestre', 'Un roble', 'Un cerezo', 'Nada'],
+        'correctAnswerIndex': 0,
+      },
+      {
+        'id': 'q3',
+        'text': '¿Qué llevaba Hester Prynne al salir de la prisión?',
+        'options': ['Un libro', 'Un bebé de tres meses', 'Una carta', 'Nada'],
+        'correctAnswerIndex': 1,
+      },
+    ],
+  },
+
+  // --- Trivia 2: activa ahora ---
+  {
+    'id': 'grammar-warmup',
+    'title': 'Grammar Warm-up',
+    'description': 'Repaso rápido de gramática básica en inglés.',
+    'category': 'Grammar',
+    'startDate': DateTime(2026, 1, 1),
+    'endDate': DateTime(2026, 12, 31),
+    'questions': [
+      {
+        'id': 'q1',
+        'text': 'Choose the correct form: "She ___ to school every day."',
+        'options': ['go', 'goes', 'going', 'gone'],
+        'correctAnswerIndex': 1,
+      },
+      {
+        'id': 'q2',
+        'text': 'Which sentence is in the past tense?',
+        'options': [
+          'I eat breakfast.',
+          'I will eat breakfast.',
+          'I ate breakfast.',
+          'I am eating breakfast.'
+        ],
+        'correctAnswerIndex': 2,
+      },
+      {
+        'id': 'q3',
+        'text': 'Identify the adjective: "The tall man walked quickly."',
+        'options': ['man', 'walked', 'tall', 'quickly'],
+        'correctAnswerIndex': 2,
+      },
+    ],
+  },
+
+  // --- Trivia 3: "Próximamente" (fecha de inicio en el futuro) ---
+  {
+    'id': 'literature-advanced',
+    'title': 'Simbolismo en la Literatura',
+    'description':
+        'Un desafío más avanzado sobre símbolos literarios (próximamente disponible).',
+    'category': 'Literature',
+    'startDate': DateTime(2026, 12, 1),
+    'endDate': DateTime(2027, 1, 31),
+    'questions': [
+      {
+        'id': 'q1',
+        'text': '¿Qué simboliza la letra escarlata "A" en la novela?',
+        'options': ['Amor', 'Adulterio', 'Amistad', 'Autoridad'],
+        'correctAnswerIndex': 1,
+      },
+      {
+        'id': 'q2',
+        'text': '¿Qué representa el rosal junto a la prisión?',
+        'options': ['Peligro', 'Compasión y esperanza', 'Riqueza', 'Muerte'],
+        'correctAnswerIndex': 1,
+      },
+    ],
+  },
 ];

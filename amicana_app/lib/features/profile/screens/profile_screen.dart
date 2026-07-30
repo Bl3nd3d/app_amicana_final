@@ -1,34 +1,27 @@
-import 'package:amicana_app/core/services/progress_service.dart';
-import 'package:amicana_app/features/profile/bloc/progress_bloc.dart';
-import 'package:amicana_app/features/profile/bloc/progress_event.dart';
-import 'package:amicana_app/features/profile/bloc/progress_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:amicana_app/features/profile/bloc/progress_bloc.dart';
+import 'package:amicana_app/features/profile/bloc/progress_event.dart';
+import 'package:amicana_app/features/profile/bloc/progress_state.dart';
+import 'package:amicana_app/core/models/progress_model.dart';
+import 'package:amicana_app/core/services/progress_service.dart';
+import 'package:amicana_app/core/models/quiz_resolution_model.dart';
+import 'package:amicana_app/features/library/models/book_model.dart';
+import 'package:amicana_app/features/library/services/library_service.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          ProgressBloc(progressService: ProgressService())..add(LoadProgress()),
-      child: const ProfileView(),
-    );
-  }
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
-  @override
-  State<ProfileView> createState() => _ProfileViewState();
-}
-
-class _ProfileViewState extends State<ProfileView>
+class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _libraryService = LibraryService();
+  List<Book>? _books;
 
   @override
   void initState() {
@@ -36,6 +29,9 @@ class _ProfileViewState extends State<ProfileView>
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       if (mounted) setState(() {});
+    });
+    _libraryService.getBooks().then((books) {
+      if (mounted) setState(() => _books = books);
     });
   }
 
@@ -53,56 +49,47 @@ class _ProfileViewState extends State<ProfileView>
 
     if (currentUser?.email != null && currentUser!.email!.isNotEmpty) {
       userName = currentUser.email!.split('@').first;
-      userName =
-          userName.substring(0, 1).toUpperCase() + userName.substring(1);
+      userName = userName.substring(0, 1).toUpperCase() + userName.substring(1);
       userEmail = currentUser.email!;
     } else if (currentUser?.displayName != null &&
         currentUser!.displayName!.isNotEmpty) {
       userName = currentUser.displayName!;
     }
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A183C),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/library'),
-        ),
-        title: const Text('Profile',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () => context.push('/settings'),
+    return BlocProvider(
+      create: (context) =>
+          ProgressBloc(progressService: ProgressService())..add(LoadProgress()),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0A183C),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => context.go('/library'),
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.3,
-              child: Image.asset('assets/images/fondo_app.webp',
-                  fit: BoxFit.cover),
+          title: const Text('Profile',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings, color: Colors.white),
+              onPressed: () => context.push('/settings'),
             ),
-          ),
-          BlocBuilder<ProgressBloc, ProgressState>(
-            builder: (context, state) {
-              if (state is ProgressLoaded) {
-                final progress = state.progress;
-                final coursesEnrolled = progress.totalCompletedChapters.toString();
-                final averageScore = progress.completedQuizzesCount > 0
-                    ? ((progress.globalScore / progress.completedQuizzesCount) * 10)
-                        .round() 
-                    : 0;
-                final daysInLearning = progress.creationDate != null
-                    ? DateTime.now().difference(progress.creationDate!).inDays.toString()
-                    : '0';
-                const totalOfRings = '5'; // Hardcoded as per request
-
+          ],
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.3,
+                child: Image.asset('assets/images/fondo_app.webp',
+                    fit: BoxFit.cover),
+              ),
+            ),
+            BlocBuilder<ProgressBloc, ProgressState>(
+              builder: (context, state) {
+                final progress = state is ProgressLoaded ? state.progress : Progress();
                 return ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   children: [
@@ -110,19 +97,17 @@ class _ProfileViewState extends State<ProfileView>
                         child: _buildProfileHeader(
                             userName, userEmail, currentUser?.photoURL)),
                     const SizedBox(height: 24),
-                    _buildStatsGrid(coursesEnrolled, '$averageScore%',
-                        daysInLearning, totalOfRings),
+                    _buildStatsGrid(progress),
                     const SizedBox(height: 24),
                     _buildTabs(),
-                    _buildTabContent(progress.categoryStats),
+                    _buildTabContent(progress),
                     const SizedBox(height: 24),
                   ],
                 );
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -148,24 +133,23 @@ class _ProfileViewState extends State<ProfileView>
     );
   }
 
-  Widget _buildStatsGrid(
-      String courses, String score, String days, String rings) {
+  Widget _buildStatsGrid(Progress progress) {
     return Column(
       children: [
         Row(
           children: [
             Expanded(
                 child: _StatCard(
-                    icon: Icons.play_arrow,
-                    value: courses,
-                    label: 'Course Enrolled',
+                    icon: Icons.menu_book_outlined,
+                    value: '${progress.totalCompletedChapters}',
+                    label: 'Capítulos Completados',
                     color: Colors.blue)),
             const SizedBox(width: 16),
             Expanded(
                 child: _StatCard(
-                    icon: Icons.flash_on,
-                    value: score,
-                    label: 'Average Score',
+                    icon: Icons.quiz_outlined,
+                    value: '${progress.totalCompletedQuizzes}',
+                    label: 'Trivias Resueltas',
                     color: Colors.orange)),
           ],
         ),
@@ -174,17 +158,12 @@ class _ProfileViewState extends State<ProfileView>
           children: [
             Expanded(
                 child: _StatCard(
-                    icon: Icons.calendar_today,
-                    value: days,
-                    label: 'Days in Learning',
+                    icon: Icons.emoji_events_outlined,
+                    value: '${progress.globalScore}',
+                    label: 'Puntaje Global',
                     color: Colors.green)),
             const SizedBox(width: 16),
-            Expanded(
-                child: _StatCard(
-                    icon: Icons.star,
-                    value: rings,
-                    label: 'Total of Rings',
-                    color: Colors.yellow)),
+            Expanded(child: _AverageAccuracyCard()),
           ],
         ),
       ],
@@ -208,51 +187,95 @@ class _ProfileViewState extends State<ProfileView>
     );
   }
 
-  Widget _buildTabContent(Map<String, int> categoryStats) {
+  Widget _buildTabContent(Progress progress) {
+    if (_books == null) {
+      return const SizedBox(
+        height: 120,
+        child: Center(child: CircularProgressIndicator(color: Colors.white)),
+      );
+    }
+
+    final completedIds = progress.completedChapterIds;
+    final inProgress = <(Book, int, int)>[];
+    final upcoming = <(Book, int, int)>[];
+    final completed = <(Book, int, int)>[];
+
+    for (final book in _books!) {
+      final total = book.chapters.length;
+      if (total == 0) continue;
+      final done = book.chapters.where((c) => completedIds.contains(c.id)).length;
+      if (done == 0) {
+        upcoming.add((book, done, total));
+      } else if (done == total) {
+        completed.add((book, done, total));
+      } else {
+        inProgress.add((book, done, total));
+      }
+    }
+
     return SizedBox(
       height: 300,
       child: TabBarView(
         controller: _tabController,
         children: [
-          _buildProgressList(categoryStats),
-          const Center(
-              child: Text('No upcoming courses',
-                  style: TextStyle(color: Colors.white70))),
-          const Center(
-              child: Text('No completed courses',
-                  style: TextStyle(color: Colors.white70))),
+          _buildBookList(inProgress, 'No tenés libros en progreso.'),
+          _buildBookList(upcoming, 'No tenés libros por empezar.'),
+          _buildBookList(completed, 'Todavía no completaste ningún libro.'),
         ],
       ),
     );
   }
 
-  Widget _buildProgressList(Map<String, int> categoryStats) {
-    if (categoryStats.isEmpty) {
-      return const Center(child: Text('No progress yet.', style: TextStyle(color: Colors.white70)));
+  Widget _buildBookList(List<(Book, int, int)> entries, String emptyMessage) {
+    if (entries.isEmpty) {
+      return Center(
+          child: Text(emptyMessage,
+              style: const TextStyle(color: Colors.white70)));
     }
     return ListView(
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
-      children: categoryStats.entries.map((entry) {
-        // Simple mapping from category to icon and color
-        IconData icon = Icons.school_outlined;
-        Color color = Colors.blue;
-        if (entry.key.toLowerCase() == 'writing') {
-          icon = Icons.edit_outlined;
-          color = Colors.pink;
-        } else if (entry.key.toLowerCase() == 'reading') {
-          icon = Icons.book_outlined;
-          color = Colors.green;
-        }
-
+      children: entries.map((entry) {
+        final (book, done, total) = entry;
         return _ProgressListItem(
-            icon: icon,
-            title: entry.key.toUpperCase(),
-            date: 'Updated recently', // Date is not available
-            progress: (entry.value % 100) / 100, // Example progress
-            progressText: '${entry.value} pts',
-            color: color);
+          icon: Icons.menu_book_outlined,
+          title: book.title,
+          subtitle: book.author,
+          progress: total > 0 ? done / total : 0,
+          progressText: '$done/$total',
+          color: Colors.blue,
+        );
       }).toList(),
+    );
+  }
+}
+
+/// Card que calcula la precisión promedio (aciertos / preguntas) de todo
+/// el historial de trivias resueltas.
+class _AverageAccuracyCard extends StatelessWidget {
+  final _service = ProgressService();
+
+  _AverageAccuracyCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<QuizResolution>>(
+      stream: _service.watchQuizResolutions(),
+      builder: (context, snapshot) {
+        final results = snapshot.data ?? const <QuizResolution>[];
+        String value = '—';
+        if (results.isNotEmpty) {
+          final avg = results.map((r) => r.accuracy).reduce((a, b) => a + b) /
+              results.length;
+          value = '${(avg * 100).toStringAsFixed(0)}%';
+        }
+        return _StatCard(
+          icon: Icons.track_changes_outlined,
+          value: value,
+          label: 'Precisión Promedio',
+          color: Colors.purpleAccent,
+        );
+      },
     );
   }
 }
@@ -281,7 +304,7 @@ class _StatCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor: color.withAlpha(75),
+            backgroundColor: color.withValues(alpha: 0.3),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(height: 12),
@@ -302,14 +325,14 @@ class _StatCard extends StatelessWidget {
 class _ProgressListItem extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String date;
+  final String subtitle;
   final double progress;
   final String progressText;
   final Color color;
   const _ProgressListItem(
       {required this.icon,
       required this.title,
-      required this.date,
+      required this.subtitle,
       required this.progress,
       required this.progressText,
       required this.color});
@@ -329,19 +352,24 @@ class _ProgressListItem extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                  backgroundColor: color.withAlpha(50),
+                  backgroundColor: color.withValues(alpha: 0.2),
                   child: Icon(icon, color: color)),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
-                  Text(date,
-                      style:
-                          const TextStyle(color: Colors.white54, fontSize: 12)),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    Text(subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                  ],
+                ),
               ),
             ],
           ),
