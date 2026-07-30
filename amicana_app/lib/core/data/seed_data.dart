@@ -41,6 +41,7 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
       }
     ]
   },
+
   // --- Libro 2: Sally's Phone ---
   {
     'id': "sallys-phone",
@@ -92,6 +93,7 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
       }
     ]
   },
+
   // --- Libro 3: The Giver - Lois Lowry ---
   {
     'id': "The-Giver-Lois-Lowry",
@@ -241,6 +243,58 @@ final List<Map<String, dynamic>> seedQuizzesData = [
         'id': 'q2',
         'text': '¿Qué representa el rosal junto a la prisión?',
         'options': ['Peligro', 'Compasión y esperanza', 'Riqueza', 'Muerte'],
+        'correctAnswerIndex': 1,
+      },
+    ],
+  },
+
+  // --- Trivia 4: The Giver, Capítulos 1-2 (categoría Grammar) ---
+  {
+    'id': 'the-giver-ch1-2',
+    'title': 'The Giver: Chapters 1-2',
+    'description':
+        'Preguntas de comprensión lectora sobre los capítulos 1 y 2 de The Giver.',
+    'category': 'Grammar',
+    'startDate': DateTime(2026, 1, 1),
+    'endDate': DateTime(2026, 12, 31),
+    'questions': [
+      {
+        'id': 'q1',
+        'text':
+            'At the start of the book, what word does Jonas use to describe his feelings about the Ceremony of Twelve?',
+        'options': ['frightened', 'ambivalent', 'apprehensive', 'worried'],
+        'correctAnswerIndex': 2,
+      },
+      {
+        'id': 'q2',
+        'text':
+            "The first time we see Jonas' family performing the Telling of Feelings, what feeling does his sister Lily talk about?",
+        'options': ['joy', 'sadness', 'anger', 'love'],
+        'correctAnswerIndex': 2,
+      },
+      {
+        'id': 'q3',
+        'text':
+            "What do older siblings do for younger siblings, even though it's technically against the rules?",
+        'options': [
+          'give them extra desserts',
+          'do their homework',
+          'teach them to swim',
+          'give them bike-riding lessons'
+        ],
+        'correctAnswerIndex': 3,
+      },
+      {
+        'id': 'q4',
+        'text':
+            "How is official news disseminated to the members of Jonas' community?",
+        'options': ['loudspeakers', 'hologram', 'popal decree', 'email'],
+        'correctAnswerIndex': 0,
+      },
+      {
+        'id': 'q5',
+        'text': "How many children are born in Jonas' community each year?",
+        'options': ['25', '50', '100', 'It varies.'],
         'correctAnswerIndex': 1,
       },
     ],

@@ -6,6 +6,8 @@ import 'package:amicana_app/core/services/bookmark_service.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
 import 'package:amicana_app/features/library/services/library_service.dart';
+import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
+import 'package:amicana_app/core/services/quiz_service.dart';
 
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
@@ -16,22 +18,52 @@ class SavedScreen extends StatefulWidget {
 
 class _SavedScreenState extends State<SavedScreen> {
   final _libraryService = LibraryService();
+  final _quizService = QuizService();
   final _bookmarkService = BookmarkService();
   List<Book>? _allBooks;
+  List<Quiz>? _allQuizzes;
   String? _loadError;
+  bool _openingQuiz = false;
 
   @override
   void initState() {
     super.initState();
-    _loadBooks();
+    _loadContent();
   }
 
-  Future<void> _loadBooks() async {
+  Future<void> _loadContent() async {
     try {
-      final books = await _libraryService.getBooks();
-      if (mounted) setState(() => _allBooks = books);
+      final results = await Future.wait([
+        _libraryService.getBooks(),
+        _quizService.getQuizzes(),
+      ]);
+      if (mounted) {
+        setState(() {
+          _allBooks = results[0] as List<Book>;
+          _allQuizzes = results[1] as List<Quiz>;
+        });
+      }
     } catch (e) {
-      if (mounted) setState(() => _loadError = 'No se pudo cargar tu contenido guardado.');
+      if (mounted) {
+        setState(() => _loadError = 'No se pudo cargar tu contenido guardado.');
+      }
+    }
+  }
+
+  Future<void> _openQuiz(Quiz quiz) async {
+    setState(() => _openingQuiz = true);
+    try {
+      final questions = await _quizService.getQuestionsForQuiz(quiz.id);
+      if (!mounted) return;
+      context.go('/quizzes/quiz/${quiz.id}', extra: quiz.copyWith(questions: questions));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No se pudo abrir la trivia: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _openingQuiz = false);
     }
   }
 
@@ -66,7 +98,7 @@ class _SavedScreenState extends State<SavedScreen> {
             )
           else if (_loadError != null)
             Center(child: Text(_loadError!, style: const TextStyle(color: Colors.white70)))
-          else if (_allBooks == null)
+          else if (_allBooks == null || _allQuizzes == null)
             const Center(child: CircularProgressIndicator(color: Colors.white))
           else
             StreamBuilder<Map<String, dynamic>?>(
@@ -75,9 +107,12 @@ class _SavedScreenState extends State<SavedScreen> {
                 final data = snapshot.data;
                 final savedBookIds = List<String>.from(data?['savedBookIds'] ?? []);
                 final savedChapterIds = List<String>.from(data?['savedChapterIds'] ?? []);
+                final savedQuizIds = List<String>.from(data?['savedQuizIds'] ?? []);
 
                 final savedBooks =
                     _allBooks!.where((b) => savedBookIds.contains(b.id)).toList();
+                final savedQuizzes =
+                    _allQuizzes!.where((q) => savedQuizIds.contains(q.id)).toList();
 
                 final savedChapters = <(Book, Chapter)>[];
                 for (final book in _allBooks!) {
@@ -89,7 +124,7 @@ class _SavedScreenState extends State<SavedScreen> {
                   }
                 }
 
-                if (savedBooks.isEmpty && savedChapters.isEmpty) {
+                if (savedBooks.isEmpty && savedChapters.isEmpty && savedQuizzes.isEmpty) {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
@@ -106,7 +141,7 @@ class _SavedScreenState extends State<SavedScreen> {
                                   fontWeight: FontWeight.w600)),
                           const SizedBox(height: 8),
                           Text(
-                            'Tocá el ícono de guardado en un libro o capítulo para tenerlo acá.',
+                            'Tocá el ícono de guardado en un libro, capítulo o trivia para tenerlo acá.',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
                           ),
@@ -116,42 +151,66 @@ class _SavedScreenState extends State<SavedScreen> {
                   );
                 }
 
-                return ListView(
-                  padding: const EdgeInsets.all(16.0),
+                return Stack(
                   children: [
-                    if (savedBooks.isNotEmpty) ...[
-                      const Text('Libros guardados',
-                          style: TextStyle(color: Colors.white54, fontSize: 12)),
-                      const SizedBox(height: 8),
-                      ...savedBooks.map((book) => _SavedTile(
-                            icon: Icons.book,
-                            title: book.title,
-                            subtitle: book.author,
-                            onTap: () => context.push('/books/${book.id}'),
-                            onUnsave: () =>
-                                _bookmarkService.setBookSaved(userId, book.id, false),
-                          )),
-                      const SizedBox(height: 20),
-                    ],
-                    if (savedChapters.isNotEmpty) ...[
-                      const Text('Capítulos guardados',
-                          style: TextStyle(color: Colors.white54, fontSize: 12)),
-                      const SizedBox(height: 8),
-                      ...savedChapters.map((entry) {
-                        final (book, chapter) = entry;
-                        return _SavedTile(
-                          icon: Icons.menu_book_outlined,
-                          title: chapter.title,
-                          subtitle: book.title,
-                          onTap: () => context.push(
-                            '/books/${book.id}/chapter/${chapter.id}',
-                            extra: {'book': book, 'chapter': chapter},
-                          ),
-                          onUnsave: () => _bookmarkService.setChapterSaved(
-                              userId, book.id, chapter.id, false),
-                        );
-                      }),
-                    ],
+                    ListView(
+                      padding: const EdgeInsets.all(16.0),
+                      children: [
+                        if (savedBooks.isNotEmpty) ...[
+                          const Text('Libros guardados',
+                              style: TextStyle(color: Colors.white54, fontSize: 12)),
+                          const SizedBox(height: 8),
+                          ...savedBooks.map((book) => _SavedTile(
+                                icon: Icons.book,
+                                title: book.title,
+                                subtitle: book.author,
+                                onTap: () => context.push('/books/${book.id}'),
+                                onUnsave: () =>
+                                    _bookmarkService.setBookSaved(userId, book.id, false),
+                              )),
+                          const SizedBox(height: 20),
+                        ],
+                        if (savedChapters.isNotEmpty) ...[
+                          const Text('Capítulos guardados',
+                              style: TextStyle(color: Colors.white54, fontSize: 12)),
+                          const SizedBox(height: 8),
+                          ...savedChapters.map((entry) {
+                            final (book, chapter) = entry;
+                            return _SavedTile(
+                              icon: Icons.menu_book_outlined,
+                              title: chapter.title,
+                              subtitle: book.title,
+                              onTap: () => context.push(
+                                '/books/${book.id}/chapter/${chapter.id}',
+                                extra: {'book': book, 'chapter': chapter},
+                              ),
+                              onUnsave: () => _bookmarkService.setChapterSaved(
+                                  userId, book.id, chapter.id, false),
+                            );
+                          }),
+                          const SizedBox(height: 20),
+                        ],
+                        if (savedQuizzes.isNotEmpty) ...[
+                          const Text('Trivias guardadas',
+                              style: TextStyle(color: Colors.white54, fontSize: 12)),
+                          const SizedBox(height: 8),
+                          ...savedQuizzes.map((quiz) => _SavedTile(
+                                icon: Icons.quiz,
+                                title: quiz.title,
+                                subtitle: quiz.category,
+                                onTap: () => _openQuiz(quiz),
+                                onUnsave: () =>
+                                    _bookmarkService.setQuizSaved(userId, quiz.id, false),
+                              )),
+                        ],
+                      ],
+                    ),
+                    if (_openingQuiz)
+                      Container(
+                        color: Colors.black45,
+                        child:
+                            const Center(child: CircularProgressIndicator(color: Colors.white)),
+                      ),
                   ],
                 );
               },

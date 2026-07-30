@@ -33,6 +33,7 @@ class AuthService {
         'completedChapterIds': [],
         'savedBookIds': [],
         'savedChapterIds': [],
+        'savedQuizIds': [],
       });
     }
   }

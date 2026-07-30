@@ -66,7 +66,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
         ),
         actions: [
           if (authState is AuthSuccess)
-            BookmarkButton(
+            BookmarkButton.chapter(
               userId: authState.user.id,
               bookId: widget.book.id,
               chapterId: widget.chapter.id,

@@ -11,6 +11,7 @@ class User {
   final List<String> completedChapterIds;
   final List<String> savedBookIds;
   final List<String> savedChapterIds;
+  final List<String> savedQuizIds;
 
   User({
     required this.id,
@@ -23,6 +24,7 @@ class User {
     this.completedChapterIds = const [],
     this.savedBookIds = const [],
     this.savedChapterIds = const [],
+    this.savedQuizIds = const [],
   });
 
   factory User.fromFirestore(DocumentSnapshot doc) {
@@ -38,6 +40,7 @@ class User {
       completedChapterIds: List<String>.from(data['completedChapterIds'] ?? []),
       savedBookIds: List<String>.from(data['savedBookIds'] ?? []),
       savedChapterIds: List<String>.from(data['savedChapterIds'] ?? []),
+      savedQuizIds: List<String>.from(data['savedQuizIds'] ?? []),
     );
   }
 
@@ -52,6 +55,7 @@ class User {
     List<String>? completedChapterIds,
     List<String>? savedBookIds,
     List<String>? savedChapterIds,
+    List<String>? savedQuizIds,
   }) {
     return User(
       id: id ?? this.id,
@@ -64,6 +68,7 @@ class User {
       completedChapterIds: completedChapterIds ?? this.completedChapterIds,
       savedBookIds: savedBookIds ?? this.savedBookIds,
       savedChapterIds: savedChapterIds ?? this.savedChapterIds,
+      savedQuizIds: savedQuizIds ?? this.savedQuizIds,
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/quizzes/bloc/quizzes_bloc.dart';
 import 'package:amicana_app/features/quizzes/models/quiz_model.dart';
+import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
+import 'package:amicana_app/core/widgets/bookmark_button.dart';
 
 class QuizzesListScreen extends StatelessWidget {
   const QuizzesListScreen({super.key});
@@ -88,6 +90,8 @@ class _QuizListItem extends StatelessWidget {
       statusColor = Colors.orangeAccent;
     }
 
+    final authState = context.watch<AuthBloc>().state;
+
     return Card(
       color: Colors.white.withValues(alpha: 0.1),
       elevation: 0,
@@ -100,11 +104,18 @@ class _QuizListItem extends StatelessWidget {
         subtitle: Text(quiz.description,
             style: const TextStyle(color: Colors.white70)),
         leading: Icon(Icons.quiz, color: Theme.of(context).primaryColor),
-        trailing: Chip(
-          label: Text(statusText),
-          backgroundColor: statusColor.withValues(alpha: 0.2),
-          labelStyle: TextStyle(
-              color: statusColor, fontWeight: FontWeight.bold, fontSize: 12),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Chip(
+              label: Text(statusText),
+              backgroundColor: statusColor.withValues(alpha: 0.2),
+              labelStyle: TextStyle(
+                  color: statusColor, fontWeight: FontWeight.bold, fontSize: 12),
+            ),
+            if (authState is AuthSuccess)
+              BookmarkButton.quiz(userId: authState.user.id, quizId: quiz.id),
+          ],
         ),
         onTap: isActive
             ? () => context.go('/quizzes/quiz/${quiz.id}', extra: quiz)
