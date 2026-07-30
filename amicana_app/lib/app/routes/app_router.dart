@@ -20,19 +20,14 @@ import 'package:amicana_app/features/quizzes/screens/quizzes_list_screen.dart';
 import 'package:amicana_app/features/quizzes/screens/quiz_player_screen.dart';
 import 'package:amicana_app/features/profile/screens/profile_screen.dart';
 import 'package:amicana_app/features/profile/screens/settings_screen.dart';
-import 'package:amicana_app/features/library/screens/explore_topics_screen.dart';
-import 'package:amicana_app/features/library/screens/saved_screen.dart';
-import 'package:amicana_app/features/library/screens/search_screen.dart';
-import 'package:amicana_app/features/library/screens/suggestions_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/help_center_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/learning_reminder_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/personal_details_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/preference_video_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/referral_code_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/voucher_code_screen.dart';
-import 'package:amicana_app/features/profile/screens/settings/your_download_screen.dart';
-import 'package:amicana_app/features/grammar/screens/grammar_screen.dart';
 import 'package:amicana_app/features/profile/screens/progress_screen.dart';
+import 'package:amicana_app/features/profile/screens/personal_details_screen.dart';
+import 'package:amicana_app/features/profile/screens/preference_video_screen.dart';
+import 'package:amicana_app/features/profile/screens/your_downloads_screen.dart';
+import 'package:amicana_app/features/profile/screens/referral_code_screen.dart';
+import 'package:amicana_app/features/profile/screens/learning_reminder_screen.dart';
+import 'package:amicana_app/features/profile/screens/voucher_code_screen.dart';
+import 'package:amicana_app/features/profile/screens/help_center_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -64,27 +59,6 @@ class AppRouter {
           path: '/library',
           name: 'library',
           builder: (context, state) => const LibraryHomeScreen()),
-      GoRoute(
-          path: '/search',
-          name: 'search',
-          builder: (context, state) => const SearchScreen()),
-      GoRoute(
-          path: '/saved',
-          name: 'saved',
-          builder: (context, state) => const SavedScreen()),
-      GoRoute(
-          path: '/explore-topics',
-          name: 'explore-topics',
-          builder: (context, state) => const ExploreTopicsScreen()),
-      GoRoute(
-          path: '/suggestions',
-          name: 'suggestions',
-          builder: (context, state) => const SuggestionsScreen()),
-      GoRoute(
-        path: '/grammar',
-        name: 'grammar',
-        builder: (context, state) => const GrammarScreen(),
-      ),
       GoRoute(
           path: '/books',
           name: 'books',
@@ -126,35 +100,37 @@ class AppRouter {
       GoRoute(
           path: '/settings',
           name: 'settings',
-          builder: (context, state) => const SettingsScreen()),
-      GoRoute(
-          path: '/settings/personal-details',
-          name: 'personal-details',
-          builder: (context, state) => const PersonalDetailsScreen()),
-      GoRoute(
-          path: '/settings/preference-video',
-          name: 'preference-video',
-          builder: (context, state) => const PreferenceVideoScreen()),
-      GoRoute(
-          path: '/settings/your-download',
-          name: 'your-download',
-          builder: (context, state) => const YourDownloadScreen()),
-      GoRoute(
-          path: '/settings/referral-code',
-          name: 'referral-code',
-          builder: (context, state) => const ReferralCodeScreen()),
-      GoRoute(
-          path: '/settings/learning-reminder',
-          name: 'learning-reminder',
-          builder: (context, state) => const LearningReminderScreen()),
-      GoRoute(
-          path: '/settings/voucher-code',
-          name: 'voucher-code',
-          builder: (context, state) => const VoucherCodeScreen()),
-      GoRoute(
-          path: '/settings/help-center',
-          name: 'help-center',
-          builder: (context, state) => const HelpCenterScreen()),
+          builder: (context, state) => const SettingsScreen(),
+          routes: [
+            GoRoute(
+                path: 'personal-details',
+                name: 'personalDetails',
+                builder: (context, state) => const PersonalDetailsScreen()),
+            GoRoute(
+                path: 'preference-video',
+                name: 'preferenceVideo',
+                builder: (context, state) => const PreferenceVideoScreen()),
+            GoRoute(
+                path: 'downloads',
+                name: 'yourDownloads',
+                builder: (context, state) => const YourDownloadsScreen()),
+            GoRoute(
+                path: 'referral-code',
+                name: 'referralCode',
+                builder: (context, state) => const ReferralCodeScreen()),
+            GoRoute(
+                path: 'learning-reminder',
+                name: 'learningReminder',
+                builder: (context, state) => const LearningReminderScreen()),
+            GoRoute(
+                path: 'voucher-code',
+                name: 'voucherCode',
+                builder: (context, state) => const VoucherCodeScreen()),
+            GoRoute(
+                path: 'help-center',
+                name: 'helpCenter',
+                builder: (context, state) => const HelpCenterScreen()),
+          ]),
       GoRoute(
         path: '/progress',
         name: 'progress',
