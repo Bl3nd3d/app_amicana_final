@@ -28,6 +28,8 @@ import 'package:amicana_app/features/profile/screens/referral_code_screen.dart';
 import 'package:amicana_app/features/profile/screens/learning_reminder_screen.dart';
 import 'package:amicana_app/features/profile/screens/voucher_code_screen.dart';
 import 'package:amicana_app/features/profile/screens/help_center_screen.dart';
+import 'package:amicana_app/features/search/screens/search_screen.dart';
+import 'package:amicana_app/features/library/screens/saved_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -62,7 +64,8 @@ class AppRouter {
       GoRoute(
           path: '/books',
           name: 'books',
-          builder: (context, state) => const BookListScreen(),
+          builder: (context, state) => BookListScreen(
+              category: state.uri.queryParameters['category']),
           routes: [
             GoRoute(
                 path: ':bookId',
@@ -93,6 +96,14 @@ class AppRouter {
                 builder: (context, state) =>
                     QuizPlayerScreen(quiz: state.extra as Quiz)),
           ]),
+      GoRoute(
+          path: '/search',
+          name: 'search',
+          builder: (context, state) => const SearchScreen()),
+      GoRoute(
+          path: '/saved',
+          name: 'saved',
+          builder: (context, state) => const SavedScreen()),
       GoRoute(
           path: '/profile',
           name: 'profile',

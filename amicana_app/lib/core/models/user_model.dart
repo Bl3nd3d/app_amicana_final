@@ -9,6 +9,8 @@ class User {
   final Map<String, int> categoryStats;
   final List<String> completedQuizzes;
   final List<String> completedChapterIds;
+  final List<String> savedBookIds;
+  final List<String> savedChapterIds;
 
   User({
     required this.id,
@@ -19,6 +21,8 @@ class User {
     this.categoryStats = const {},
     this.completedQuizzes = const [],
     this.completedChapterIds = const [],
+    this.savedBookIds = const [],
+    this.savedChapterIds = const [],
   });
 
   factory User.fromFirestore(DocumentSnapshot doc) {
@@ -32,6 +36,8 @@ class User {
       categoryStats: Map<String, int>.from(data['categoryStats'] ?? {}),
       completedQuizzes: List<String>.from(data['completedQuizzes'] ?? []),
       completedChapterIds: List<String>.from(data['completedChapterIds'] ?? []),
+      savedBookIds: List<String>.from(data['savedBookIds'] ?? []),
+      savedChapterIds: List<String>.from(data['savedChapterIds'] ?? []),
     );
   }
 
@@ -44,6 +50,8 @@ class User {
     Map<String, int>? categoryStats,
     List<String>? completedQuizzes,
     List<String>? completedChapterIds,
+    List<String>? savedBookIds,
+    List<String>? savedChapterIds,
   }) {
     return User(
       id: id ?? this.id,
@@ -54,6 +62,8 @@ class User {
       categoryStats: categoryStats ?? this.categoryStats,
       completedQuizzes: completedQuizzes ?? this.completedQuizzes,
       completedChapterIds: completedChapterIds ?? this.completedChapterIds,
+      savedBookIds: savedBookIds ?? this.savedBookIds,
+      savedChapterIds: savedChapterIds ?? this.savedChapterIds,
     );
   }
 }

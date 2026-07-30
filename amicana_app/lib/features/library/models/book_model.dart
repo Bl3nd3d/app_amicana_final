@@ -6,6 +6,7 @@ class Book {
   final String author;
   final String coverUrl;
   final String description;
+  final List<String> categories;
   final List<Chapter> chapters;
 
   Book({
@@ -14,6 +15,7 @@ class Book {
     required this.author,
     required this.coverUrl,
     required this.description,
+    this.categories = const [],
     required this.chapters,
   });
 }

@@ -13,6 +13,8 @@ class AppTheme {
       Color(0xFF0D47A1); // Un azul oscuro y serio
   static const Color _accentColor =
       Color(0xFF4CAF50); // Un verde para acciones positivas
+  static const Color _darkBackground =
+      Color(0xFF0A183C); // Mismo navy que ya usan las pantallas de la app
 
   // ----- TEMA CLARO -----
   static final ThemeData lightTheme = ThemeData(
@@ -63,6 +65,48 @@ class AppTheme {
     ),
   );
 
-  // Podrías definir un tema oscuro en el futuro si lo deseas.
-  // static final ThemeData darkTheme = ThemeData(...);
+  // ----- TEMA OSCURO -----
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    primaryColor: _accentColor,
+    scaffoldBackgroundColor: _darkBackground,
+
+    appBarTheme: AppBarTheme(
+      backgroundColor: _darkBackground,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      titleTextStyle: GoogleFonts.lato(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _accentColor,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        textStyle: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+    ),
+
+    textTheme: GoogleFonts.latoTextTheme(
+      ThemeData.dark().textTheme,
+    ).copyWith(
+      headlineSmall: GoogleFonts.montserrat(
+          fontWeight: FontWeight.bold, color: Colors.white),
+      bodyLarge: GoogleFonts.lato(fontSize: 16, color: Colors.white70),
+    ),
+
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: _primaryColor,
+      secondary: _accentColor,
+      brightness: Brightness.dark,
+    ),
+  );
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/library/models/book_model.dart';
 import 'package:amicana_app/core/models/chapter_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
+import 'package:amicana_app/core/widgets/bookmark_button.dart';
 
 // --- CAMBIO: Convertido a StatefulWidget para manejar el 'context' de forma segura ---
 class ChapterDetailScreen extends StatefulWidget {
@@ -49,6 +52,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+
     return Scaffold(
       backgroundColor: const Color(0xFF0A183C),
       appBar: AppBar(
@@ -59,6 +64,14 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
+        actions: [
+          if (authState is AuthSuccess)
+            BookmarkButton(
+              userId: authState.user.id,
+              bookId: widget.book.id,
+              chapterId: widget.chapter.id,
+            ),
+        ],
       ),
       body: Stack(
         children: [

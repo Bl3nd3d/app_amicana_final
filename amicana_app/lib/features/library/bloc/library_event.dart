@@ -4,3 +4,8 @@ part of 'library_bloc.dart';
 abstract class LibraryEvent {}
 
 class FetchBooks extends LibraryEvent {}
+
+class FetchBooksByCategory extends LibraryEvent {
+  final String category;
+  FetchBooksByCategory({required this.category});
+}

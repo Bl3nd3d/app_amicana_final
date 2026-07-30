@@ -9,6 +9,7 @@ final List<Map<String, dynamic>> seedBooksData = [
         'https://via.placeholder.com/200x300.png?text=The+Scarlet+Letter',
     'description':
         'Una historia de Hester Prynne, quien concibe una hija a través de un romance y lucha por crear una nueva vida de arrepentimiento y dignidad.',
+    'categories': ['Fiction', 'Grammar'],
     'chapters': [
       {
         'id': 'tsl-capitulo-1',
@@ -20,7 +21,7 @@ Next to the prison door stands a blooming wild rose bush. The narrator imagines 
 The narrator describes the rose bush as sitting on the threshold of the story he plans to tell. He then plucks one of the rose blossoms and offers it to the reader. He describes the gesture and the blossom as a symbol of the moral that the reader might learn in reading his "tale of human frailty and sorrow."
 ''',
         'pdfUrl':
-            'https://vyqsylsofvukthfdantr.supabase.co/storage/v1/object/public/archivos-amicana/pdf_caps/chapter%201%20-.pdf',
+            'https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/the%20scarlet%20letter/the-scarlet-letter-websters-thesaurus-edition.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy90aGUgc2NhcmxldCBsZXR0ZXIvdGhlLXNjYXJsZXQtbGV0dGVyLXdlYnN0ZXJzLXRoZXNhdXJ1cy1lZGl0aW9uLnBkZiIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODUzOTE4NjcsImV4cCI6MTgxNjkyNzg2N30.SizS_5fHgMuMP5V9Rj8dsbHp0qENOU6mnIwwiMWGUwQ',
         'audioUrl': 'https://open.spotify.com/track/1XwRyFRn2qU6phLtOQ53MI'
       },
       {
@@ -35,7 +36,7 @@ Hester exits the prison holding a three month-old infant. The prison guard puts 
 ''',
         'pageCount': 25,
         'pdfUrl':
-            'https://vyqsylsofvukthfdantr.supabase.co/storage/v1/object/public/archivos-amicana/pdf_caps/CHAPTER%202.pdf',
+            'https://arhioepvzjlnpkoldwco.supabase.co/storage/v1/object/sign/books/the%20scarlet%20letter/the-scarlet-letter-websters-thesaurus-edition.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9mYWEzMWJiNy0zOWE2LTQ3YmQtYmJjNS1hZWEyMThlOWM5OGUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJib29rcy90aGUgc2NhcmxldCBsZXR0ZXIvdGhlLXNjYXJsZXQtbGV0dGVyLXdlYnN0ZXJzLXRoZXNhdXJ1cy1lZGl0aW9uLnBkZiIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODUzOTE4NjcsImV4cCI6MTgxNjkyNzg2N30.SizS_5fHgMuMP5V9Rj8dsbHp0qENOU6mnIwwiMWGUwQ',
         'audioUrl': 'https://open.spotify.com/track/2k5qBSP7L76HxUFefb75q6'
       }
     ]

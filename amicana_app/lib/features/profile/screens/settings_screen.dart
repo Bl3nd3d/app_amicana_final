@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
 import 'package:amicana_app/features/library/services/library_service.dart';
+import 'package:amicana_app/app/theme/theme_cubit.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,8 +14,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _isDarkMode = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,14 +66,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: Colors.white70),
                     title: const Text('Dark Mode',
                         style: TextStyle(color: Colors.white)),
-                    trailing: Switch(
-                      value: _isDarkMode,
-                      onChanged: (newValue) {
-                        setState(() {
-                          _isDarkMode = newValue;
-                        });
+                    trailing: BlocBuilder<ThemeCubit, ThemeMode>(
+                      builder: (context, themeMode) {
+                        return Switch(
+                          value: themeMode == ThemeMode.dark,
+                          onChanged: (newValue) {
+                            context.read<ThemeCubit>().setDark(newValue);
+                          },
+                          activeThumbColor: Colors.blue,
+                        );
                       },
-                      activeThumbColor: Colors.blue,
                     ),
                   ),
                 ]),

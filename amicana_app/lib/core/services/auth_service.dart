@@ -31,6 +31,8 @@ class AuthService {
         'categoryStats': {},
         'completedQuizzes': [],
         'completedChapterIds': [],
+        'savedBookIds': [],
+        'savedChapterIds': [],
       });
     }
   }

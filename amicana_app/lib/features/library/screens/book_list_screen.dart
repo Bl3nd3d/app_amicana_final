@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart'; // <-- IMPORTACIÓN AÑADIDA Y CORREGIDA
+import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/library/bloc/library_bloc.dart';
 import 'package:amicana_app/features/library/widgets/book_card.dart';
 
 class BookListScreen extends StatelessWidget {
-  const BookListScreen({super.key});
+  final String? category;
+  const BookListScreen({super.key, this.category});
 
   @override
   Widget build(BuildContext context) {
+    final hasCategory = category != null && category!.trim().isNotEmpty;
+
     return BlocProvider(
-      create: (context) => LibraryBloc()..add(FetchBooks()),
+      create: (context) => LibraryBloc()
+        ..add(hasCategory
+            ? FetchBooksByCategory(category: category!)
+            : FetchBooks()),
       child: Scaffold(
         backgroundColor: const Color(0xFF0A183C),
         appBar: AppBar(
-          title: const Text('Biblioteca Digital'),
+          title: Text(hasCategory ? category! : 'Biblioteca Digital'),
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            // Esta función ahora funcionará porque GoRouter está importado
             onPressed: () => context.go('/library'),
           ),
         ),
@@ -38,6 +43,20 @@ class BookListScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is LibraryLoaded) {
+                  if (state.books.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Text(
+                          hasCategory
+                              ? 'Todavía no hay libros en la categoría "$category".'
+                              : 'No hay libros disponibles.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    );
+                  }
                   return GridView.builder(
                     padding: const EdgeInsets.all(16.0),
                     gridDelegate:

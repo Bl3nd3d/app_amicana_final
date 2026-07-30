@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:amicana_app/firebase_options.dart';
 import 'package:amicana_app/app/routes/app_router.dart';
 import 'package:amicana_app/app/theme/app_theme.dart';
+import 'package:amicana_app/app/theme/theme_cubit.dart';
 import 'package:amicana_app/features/auth/bloc/auth_bloc.dart';
 
 void main() async {
@@ -20,10 +21,15 @@ void main() async {
           create: (context) => AuthService(),
         ),
       ],
-      child: BlocProvider(
-        create: (context) => AuthBloc(
-          authService: RepositoryProvider.of<AuthService>(context),
-        ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthBloc(
+              authService: RepositoryProvider.of<AuthService>(context),
+            ),
+          ),
+          BlocProvider(create: (context) => ThemeCubit()),
+        ],
         child: const MyApp(),
       ),
     ),
@@ -35,11 +41,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'A.M.I.C.A.N.A. App',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return MaterialApp.router(
+          title: 'A.M.I.C.A.N.A. App',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          routerConfig: AppRouter.router,
+        );
+      },
     );
   }
 }

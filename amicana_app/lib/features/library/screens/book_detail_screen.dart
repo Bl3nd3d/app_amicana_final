@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:amicana_app/features/library/bloc/book_detail/book_detail_bloc.dart';
+import 'package:amicana_app/core/widgets/bookmark_button.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final String bookId;
@@ -42,6 +43,10 @@ class BookDetailScreen extends StatelessWidget {
                                 const Icon(Icons.arrow_back, color: Colors.white),
                             onPressed: () => context.pop(),
                           ),
+                          actions: [
+                            BookmarkButton(
+                                userId: authState.user.id, bookId: book.id),
+                          ],
                           flexibleSpace: FlexibleSpaceBar(
                             background: Hero(
                               tag: 'book-cover-${book.id}',

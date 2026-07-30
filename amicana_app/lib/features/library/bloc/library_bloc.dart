@@ -22,5 +22,15 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
         emit(LibraryError(message: e.toString()));
       }
     });
+
+    on<FetchBooksByCategory>((event, emit) async {
+      emit(LibraryLoading());
+      try {
+        final books = await _libraryService.getBooksByCategory(event.category);
+        emit(LibraryLoaded(books: books));
+      } catch (e) {
+        emit(LibraryError(message: e.toString()));
+      }
+    });
   }
 }

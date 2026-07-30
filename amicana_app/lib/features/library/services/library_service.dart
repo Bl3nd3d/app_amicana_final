@@ -33,6 +33,7 @@ class LibraryService {
           coverUrl: data['coverUrl'] ?? '',
           description: data['description'] ?? '',
           title: data['title'] ?? '',
+          categories: List<String>.from(data['categories'] ?? []),
           chapters: chapters,
         );
       }).toList());
@@ -42,6 +43,15 @@ class LibraryService {
       // En lugar de imprimir, simplemente lanzamos la excepción con un mensaje claro.
       throw Exception('No se pudieron cargar los libros desde Firestore.');
     }
+  }
+
+  /// Obtiene todos los libros que pertenecen a una categoría dada
+  /// (ej. 'Grammar'). Se filtra en el cliente porque el catálogo es chico;
+  /// si crece mucho, conviene mover esto a una query con
+  /// `.where('categories', arrayContains: category)`.
+  Future<List<Book>> getBooksByCategory(String category) async {
+    final books = await getBooks();
+    return books.where((b) => b.categories.contains(category)).toList();
   }
 
   /// Obtiene los datos de un solo libro por su ID.
@@ -72,6 +82,7 @@ class LibraryService {
           coverUrl: data['coverUrl'] ?? '',
           description: data['description'] ?? '',
           title: data['title'] ?? '',
+          categories: List<String>.from(data['categories'] ?? []),
           chapters: chapters);
     } catch (e) {
       // En lugar de imprimir, lanzamos la excepción.

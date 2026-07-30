@@ -43,13 +43,11 @@ class LibraryHomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle(
-                    context, 'Explore topics', () => context.go('/explore-topics')),
+                _buildSectionTitle(context, 'Explore topics'),
                 const SizedBox(height: 16),
                 _buildTopicsGrid(context),
                 const SizedBox(height: 32),
-                _buildSectionTitle(context, 'Suggestion for you',
-                    () => context.go('/suggestions')),
+                _buildSectionTitle(context, 'Suggestion for you'),
               ],
             ),
           ),
@@ -93,8 +91,7 @@ class LibraryHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(
-      BuildContext context, String title, VoidCallback onSeeMore) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -106,12 +103,9 @@ class LibraryHomeScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        TextButton(
-          onPressed: onSeeMore,
-          child: Text(
-            'See more',
-            style: TextStyle(color: Colors.blue[300], fontSize: 14),
-          ),
+        Text(
+          'See more',
+          style: TextStyle(color: Colors.blue[300], fontSize: 14),
         ),
       ],
     );
@@ -137,12 +131,11 @@ class LibraryHomeScreen extends StatelessWidget {
             icon: Icons.book,
             onTap: () => context.go('/books')),
 
-        // --- BOTÓN DE GRAMMAR MODIFICADO PARA USAR SEED DATA ---
         _TopicButton(
             title: 'Grammar',
             color: Colors.green[200]!,
             icon: Icons.spellcheck,
-            onTap: () => context.go('/grammar')),
+            onTap: () => context.push('/books?category=Grammar')),
 
         _TopicButton(
             title: 'Progress',
@@ -196,7 +189,6 @@ class LibraryHomeScreen extends StatelessWidget {
       onTap: (index) {
         switch (index) {
           case 0:
-            // Ya está en la pantalla de inicio, no es necesario hacer nada o recargar.
             context.go('/library');
             break;
           case 1:
@@ -233,8 +225,9 @@ class _TopicButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onTap;
 
-  const _TopicButton(
-      {required this.title,
+  const _TopicButton({
+    super.key,
+      required this.title,
       required this.color,
       required this.icon,
       this.onTap});
